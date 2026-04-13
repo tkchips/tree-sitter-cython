@@ -1,9 +1,9 @@
 /**
- * @file Python grammar for tree-sitter
+ * @file Cython grammar for tree-sitter (based on Python grammar)
  * @author Max Brunsfeld <maxbrunsfeld@gmail.com>
  * @license MIT
- * @see {@link https://docs.python.org/2/reference/grammar.html|Python 2 grammar}
  * @see {@link https://docs.python.org/3/reference/grammar.html|Python 3 grammar}
+ * @see {@link https://cython.readthedocs.io/|Cython documentation}
  */
 
 
@@ -32,6 +32,8 @@ const PREC = {
   unary: 20,
   power: 21,
   call: 22,
+  cdef: 1,
+  c_type: 2,
 };
 
 const SEMICOLON = ';';
@@ -55,6 +57,21 @@ module.exports = grammar({
     [$.print_statement, $.primary_expression],
     [$.type_alias_statement, $.primary_expression],
     [$.match_statement, $.primary_expression],
+    // Cython conflicts
+    [$.cimport_statement, $.primary_expression],
+    [$.cimport_from_statement, $.import_from_statement],
+    [$.cdef_statement, $.primary_expression],
+    [$.cdef_statement, $.cdef_function_definition],
+    [$.cdef_statement, $.cdef_class_definition],
+    [$.cdef_statement, $.cdef_extern_block],
+    [$.c_parameter, $.primary_expression],
+    [$.ctypedef_statement, $.primary_expression],
+    [$.ctypedef_statement, $.ctypedef_struct_definition],
+    [$.ctypedef_statement, $.ctypedef_fused_definition],
+    [$.cython_def_statement, $.primary_expression],
+    [$.cython_if_statement, $.primary_expression],
+    [$.cython_include_statement, $.primary_expression],
+    [$.cython_property_definition, $.primary_expression],
   ],
 
   supertypes: $ => [
@@ -148,6 +165,13 @@ module.exports = grammar({
       $.nonlocal_statement,
       $.exec_statement,
       $.type_alias_statement,
+      // Cython simple statements
+      $.cimport_statement,
+      $.cimport_from_statement,
+      $.cdef_statement,
+      $.ctypedef_statement,
+      $.cython_def_statement,
+      $.cython_include_statement,
     ),
 
     import_statement: $ => seq(
@@ -285,6 +309,14 @@ module.exports = grammar({
       $.class_definition,
       $.decorated_definition,
       $.match_statement,
+      // Cython compound statements
+      $.cdef_function_definition,
+      $.cdef_class_definition,
+      $.ctypedef_struct_definition,
+      $.ctypedef_fused_definition,
+      $.cdef_extern_block,
+      $.cython_if_statement,
+      $.cython_property_definition,
     ),
 
     if_statement: $ => seq(
@@ -506,6 +538,8 @@ module.exports = grammar({
       field('definition', choice(
         $.class_definition,
         $.function_definition,
+        $.cdef_function_definition,
+        $.cdef_class_definition,
       )),
     ),
 
@@ -1175,6 +1209,28 @@ module.exports = grammar({
           'exec',
           'async',
           'await',
+          // Cython keywords
+          'cdef',
+          'cpdef',
+          'cimport',
+          'ctypedef',
+          'nogil',
+          'gil',
+          'readonly',
+          'public',
+          'inline',
+          'api',
+          'extern',
+          'struct',
+          'union',
+          'enum',
+          'fused',
+          'property',
+          'include',
+          'DEF',
+          'IF',
+          'ELIF',
+          'ELSE',
         ),
         $.identifier,
       )),
@@ -1199,6 +1255,241 @@ module.exports = grammar({
 
     positional_separator: _ => '/',
     keyword_separator: _ => '*',
+
+    // =========================================================================
+    // Cython rules
+    // =========================================================================
+
+    // --- Phase 1: cimport ---
+
+    cimport_statement: $ => seq(
+      'cimport',
+      $._import_list,
+    ),
+
+    cimport_from_statement: $ => seq(
+      'from',
+      field('module_name', choice(
+        $.relative_import,
+        $.dotted_name,
+      )),
+      'cimport',
+      choice(
+        $.wildcard_import,
+        $._import_list,
+        seq('(', $._import_list, ')'),
+      ),
+    ),
+
+    // --- Phase 2: C type system and cdef variable declarations ---
+
+    c_type: $ => prec.right(PREC.c_type, seq(
+      optional('const'),
+      $.identifier,
+      optional($.identifier),
+      optional($.identifier),
+      optional(field('suffix', choice(
+        $.c_pointer_declarator,
+        $.c_memoryview_declarator,
+      ))),
+    )),
+
+    c_pointer_declarator: _ => prec(PREC.c_type, repeat1('*')),
+
+    c_memoryview_declarator: $ => seq(
+      '[',
+      commaSep1($._memoryview_slice),
+      ']',
+    ),
+
+    _memoryview_slice: $ => choice(
+      ':',
+      seq(':', ':', $.expression),
+    ),
+
+    c_declarator: $ => seq(
+      field('name', $.identifier),
+      optional(seq('=', field('value', $.expression))),
+    ),
+
+    cdef_statement: $ => prec(PREC.cdef, seq(
+      'cdef',
+      optional(choice('readonly', 'public')),
+      field('type', $.c_type),
+      commaSep1(field('declarator', $.c_declarator)),
+    )),
+
+    // bare typed declarations inside extern/struct blocks: `int x`
+    c_variable_declaration: $ => prec(PREC.c_type, seq(
+      field('type', $.c_type),
+      commaSep1(field('declarator', $.c_declarator)),
+    )),
+
+    // --- Phase 3: cdef/cpdef function definitions ---
+
+    cdef_function_definition: $ => seq(
+      choice('cdef', 'cpdef'),
+      optional('inline'),
+      optional('api'),
+      optional(field('return_type', $.c_type)),
+      field('name', $.identifier),
+      field('parameters', $.c_parameters),
+      optional('nogil'),
+      optional(field('except_clause', $.cdef_except_clause)),
+      ':',
+      field('body', $._suite),
+    ),
+
+    c_parameters: $ => seq(
+      '(',
+      optional($._c_parameters_list),
+      ')',
+    ),
+
+    _c_parameters_list: $ => seq(
+      commaSep1($.c_parameter),
+      optional(','),
+    ),
+
+    c_parameter: $ => choice(
+      seq(
+        field('type', $.c_type),
+        field('name', $.identifier),
+        optional(seq('=', field('default', $.expression))),
+      ),
+      $.parameter,
+    ),
+
+    cdef_except_clause: $ => seq(
+      'except',
+      choice(
+        '?',
+        seq(optional('?'), $.expression),
+        '*',
+      ),
+    ),
+
+    // bare function declarations inside extern blocks: `double sin(double x)`
+    c_function_declaration: $ => prec(PREC.cdef, seq(
+      optional(field('return_type', $.c_type)),
+      field('name', $.identifier),
+      field('parameters', $.c_parameters),
+      optional('nogil'),
+      optional(field('except_clause', $.cdef_except_clause)),
+    )),
+
+    // Custom suite for cdef extern blocks and ctypedef struct/union/enum bodies
+    // where bare C declarations (c_function_declaration, c_variable_declaration) are valid
+    _cython_extern_suite: $ => choice(
+      seq($._indent, alias($._cython_extern_block, $.block)),
+      alias($._newline, $.block),
+    ),
+
+    _cython_extern_block: $ => seq(
+      repeat(choice(
+        $._statement,
+        $._cython_declaration_statements,
+      )),
+      $._dedent,
+    ),
+
+    _cython_declaration_statements: $ => seq(
+      sep1(choice($.c_function_declaration, $.c_variable_declaration), SEMICOLON),
+      optional(SEMICOLON),
+      $._newline,
+    ),
+
+    // --- Phase 4: cdef class definitions ---
+
+    cdef_class_definition: $ => seq(
+      'cdef',
+      'class',
+      field('name', $.identifier),
+      field('superclasses', optional($.argument_list)),
+      ':',
+      field('body', $._suite),
+    ),
+
+    // --- Phase 5: ctypedef ---
+
+    ctypedef_statement: $ => seq(
+      'ctypedef',
+      field('type', $.c_type),
+      field('name', $.identifier),
+    ),
+
+    ctypedef_struct_definition: $ => seq(
+      'ctypedef',
+      field('kind', choice('struct', 'union', 'enum')),
+      field('name', $.identifier),
+      ':',
+      field('body', $._cython_extern_suite),
+    ),
+
+    ctypedef_fused_definition: $ => seq(
+      'ctypedef',
+      'fused',
+      field('name', $.identifier),
+      ':',
+      field('body', $._suite),
+    ),
+
+    // --- Phase 6: cdef extern blocks ---
+
+    cdef_extern_block: $ => seq(
+      'cdef',
+      'extern',
+      optional(seq(
+        'from',
+        field('source', choice($.string, '*')),
+      )),
+      optional('nogil'),
+      ':',
+      field('body', $._cython_extern_suite),
+    ),
+
+    // --- Phase 7: compile-time directives, include, property ---
+
+    cython_def_statement: $ => seq(
+      'DEF',
+      field('name', $.identifier),
+      '=',
+      field('value', $.expression),
+    ),
+
+    cython_if_statement: $ => prec.right(seq(
+      'IF',
+      field('condition', $.expression),
+      ':',
+      field('consequence', $._suite),
+      repeat(field('alternative', $.cython_elif_clause)),
+      optional(field('alternative', $.cython_else_clause)),
+    )),
+
+    cython_elif_clause: $ => seq(
+      'ELIF',
+      field('condition', $.expression),
+      ':',
+      field('consequence', $._suite),
+    ),
+
+    cython_else_clause: $ => seq(
+      'ELSE',
+      ':',
+      field('body', $._suite),
+    ),
+
+    cython_include_statement: $ => seq(
+      'include',
+      field('path', $.string),
+    ),
+
+    cython_property_definition: $ => seq(
+      'property',
+      field('name', $.identifier),
+      ':',
+      field('body', $._suite),
+    ),
   },
 });
 
