@@ -67,10 +67,9 @@ x = cimport
 --------------------------------------------------------------------------------
 
 (module
-  (expression_statement
-    (assignment
-      (identifier)
-      (identifier))))
+  (assignment
+    left: (identifier)
+    right: (identifier)))
 
 ================================================================================
 Cdef variable declarations
@@ -237,8 +236,8 @@ cpdef int hybrid_func(int x):
     body: (block
       (return_statement
         (binary_operator
-          (identifier)
-          (integer))))))
+          left: (identifier)
+          right: (integer))))))
 
 ================================================================================
 Cdef inline function
@@ -324,12 +323,12 @@ cdef int divide(int a, int b) except? -1:
         name: (identifier)))
     except_clause: (cdef_except_clause
       (unary_operator
-        (integer)))
+        argument: (integer)))
     body: (block
       (return_statement
         (binary_operator
-          (identifier)
-          (identifier))))))
+          left: (identifier)
+          right: (identifier))))))
 
 ================================================================================
 Cdef class definition
@@ -368,8 +367,8 @@ cdef class MyClass:
         body: (block
           (return_statement
             (attribute
-              (identifier)
-              (identifier))))))))
+              object: (identifier)
+              attribute: (identifier))))))))
 
 ================================================================================
 Cdef class with superclass
@@ -449,12 +448,9 @@ ctypedef fused number_t:
   (ctypedef_fused_definition
     name: (identifier)
     body: (block
-      (expression_statement
-        (identifier))
-      (expression_statement
-        (identifier))
-      (expression_statement
-        (identifier)))))
+      (identifier)
+      (identifier)
+      (identifier))))
 
 ================================================================================
 Cdef extern block

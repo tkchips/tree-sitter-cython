@@ -1283,16 +1283,40 @@ module.exports = grammar({
 
     // --- Phase 2: C type system and cdef variable declarations ---
 
-    c_type: $ => prec.right(PREC.c_type, seq(
-      optional('const'),
-      $.identifier,
-      optional($.identifier),
-      optional($.identifier),
-      optional(field('suffix', choice(
-        $.c_pointer_declarator,
-        $.c_memoryview_declarator,
-      ))),
-    )),
+    c_type: $ => {
+      const keyword = value => alias(value, $.identifier);
+      const integer_type = choice(
+        keyword('char'),
+        keyword('short'),
+        seq(keyword('short'), keyword('int')),
+        keyword('int'),
+        keyword('long'),
+        seq(keyword('long'), keyword('int')),
+        seq(keyword('long'), keyword('long')),
+        seq(keyword('long'), keyword('long'), keyword('int')),
+      );
+      const numeric_type = choice(
+        integer_type,
+        keyword('float'),
+        keyword('double'),
+        seq(keyword('long'), keyword('double')),
+      );
+
+      return prec.right(PREC.c_type, seq(
+        optional(keyword('const')),
+        choice(
+          seq(choice(keyword('unsigned'), keyword('signed')), choice(integer_type, $.identifier)),
+          numeric_type,
+          keyword('void'),
+          keyword('bint'),
+          $.identifier,
+        ),
+        optional(field('suffix', choice(
+          $.c_pointer_declarator,
+          $.c_memoryview_declarator,
+        ))),
+      ));
+    },
 
     c_pointer_declarator: _ => prec(PREC.c_type, repeat1('*')),
 
@@ -1327,7 +1351,7 @@ module.exports = grammar({
 
     // --- Phase 3: cdef/cpdef function definitions ---
 
-    cdef_function_definition: $ => seq(
+    cdef_function_definition: $ => prec(PREC.cdef + 1, seq(
       choice('cdef', 'cpdef'),
       optional('inline'),
       optional('api'),
@@ -1338,7 +1362,7 @@ module.exports = grammar({
       optional(field('except_clause', $.cdef_except_clause)),
       ':',
       field('body', $._suite),
-    ),
+    )),
 
     c_parameters: $ => seq(
       '(',
@@ -1371,7 +1395,7 @@ module.exports = grammar({
 
     // bare function declarations inside extern blocks: `double sin(double x)`
     c_function_declaration: $ => prec(PREC.cdef, seq(
-      optional(field('return_type', $.c_type)),
+      field('return_type', $.c_type),
       field('name', $.identifier),
       field('parameters', $.c_parameters),
       optional('nogil'),
@@ -1418,13 +1442,17 @@ module.exports = grammar({
       field('name', $.identifier),
     ),
 
-    ctypedef_struct_definition: $ => seq(
+    ctypedef_struct_definition: $ => prec(PREC.cdef + 1, seq(
       'ctypedef',
-      field('kind', choice('struct', 'union', 'enum')),
+      field('kind', choice(
+        alias('struct', $.identifier),
+        alias('union', $.identifier),
+        alias('enum', $.identifier),
+      )),
       field('name', $.identifier),
       ':',
       field('body', $._cython_extern_suite),
-    ),
+    )),
 
     ctypedef_fused_definition: $ => seq(
       'ctypedef',
@@ -1436,7 +1464,7 @@ module.exports = grammar({
 
     // --- Phase 6: cdef extern blocks ---
 
-    cdef_extern_block: $ => seq(
+    cdef_extern_block: $ => prec(PREC.cdef + 1, seq(
       'cdef',
       'extern',
       optional(seq(
@@ -1446,7 +1474,7 @@ module.exports = grammar({
       optional('nogil'),
       ':',
       field('body', $._cython_extern_suite),
-    ),
+    )),
 
     // --- Phase 7: compile-time directives, include, property ---
 
