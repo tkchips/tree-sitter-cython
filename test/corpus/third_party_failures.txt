@@ -1,0 +1,1015 @@
+================================================================================
+Third party - cdef extern namespace option
+================================================================================
+
+cdef extern from "<vector>" namespace "std" nogil:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    namespace: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Third party - C++ cppclass template
+================================================================================
+
+cdef extern from "<vector>" namespace "std":
+    cdef cppclass vector[T, ALLOCATOR=*]:
+        ctypedef T value_type
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    namespace: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (cpp_class_definition
+        name: (identifier)
+        type_parameters: (c_template_parameters
+          (identifier)
+          (default_type_parameter
+            name: (identifier)))
+        body: (block
+          (ctypedef_statement
+            type: (c_type
+              (identifier))
+            name: (identifier)))))))
+
+================================================================================
+Third party - C++ constructors, operators, and except plus
+================================================================================
+
+cdef extern from "<vector>" namespace "std":
+    cdef cppclass iterator:
+        iterator() except +
+        T& operator*()
+        bint operator==(iterator)
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    namespace: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (cpp_class_definition
+        name: (identifier)
+        body: (block
+          (cpp_constructor_declaration
+            name: (identifier)
+            parameters: (c_parameters)
+            except_clause: (cdef_except_clause))
+          (cpp_operator_declaration
+            return_type: (c_type
+              (identifier)
+              suffix: (c_reference_declarator))
+            operator: (cpp_operator))
+          (cpp_operator_declaration
+            return_type: (c_type
+              (identifier))
+            operator: (cpp_operator)
+            parameters: (c_parameters
+              (c_parameter
+                type: (c_type
+                  (identifier))))))))))
+
+================================================================================
+Third party - templated C function declaration
+================================================================================
+
+cdef extern from "<algorithm>" namespace "std":
+    bool all_of[Iter, Pred](Iter first, Iter last, Pred pred)
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    namespace: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (c_function_declaration
+        return_type: (c_type
+          (identifier))
+        name: (identifier)
+        type_parameters: (c_template_parameters
+          (identifier)
+          (identifier))
+        parameters: (c_parameters
+          (c_parameter
+            type: (c_type
+              (identifier))
+            name: (identifier))
+          (c_parameter
+            type: (c_type
+              (identifier))
+            name: (identifier))
+          (c_parameter
+            type: (c_type
+              (identifier))
+            name: (identifier)))))))
+
+================================================================================
+Third party - forward ctypedef struct
+================================================================================
+
+cdef extern from "Python.h":
+    ctypedef struct PyObject
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (ctypedef_struct_declaration
+        kind: (identifier)
+        name: (identifier)))))
+
+================================================================================
+Third party - renamed ctypedef struct body
+================================================================================
+
+cdef extern from *:
+    ctypedef struct __pyx_memoryview "__pyx_memoryview_obj":
+        Py_buffer view
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    body: (block
+      (ctypedef_struct_definition
+        kind: (identifier)
+        name: (identifier)
+        cname: (string
+          (string_start)
+          (string_content)
+          (string_end))
+        body: (block
+          (c_variable_declaration
+            type: (c_type
+              (identifier))
+            declarator: (c_declarator
+              name: (identifier))))))))
+
+================================================================================
+Third party - cdef struct body
+================================================================================
+
+cdef extern from "<time.h>":
+    cdef struct timespec:
+        time_t tv_sec
+        long tv_nsec
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (cdef_struct_definition
+        kind: (identifier)
+        name: (identifier)
+        body: (block
+          (c_variable_declaration
+            type: (c_type
+              (identifier))
+            declarator: (c_declarator
+              name: (identifier)))
+          (c_variable_declaration
+            type: (c_type
+              (identifier))
+            declarator: (c_declarator
+              name: (identifier))))))))
+
+================================================================================
+Third party - bare struct body
+================================================================================
+
+cdef extern from "<time.h>":
+    struct timespec:
+        time_t tv_sec
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (c_struct_definition
+        kind: (identifier)
+        name: (identifier)
+        body: (block
+          (c_variable_declaration
+            type: (c_type
+              (identifier))
+            declarator: (c_declarator
+              name: (identifier))))))))
+
+================================================================================
+Third party - cdef union body
+================================================================================
+
+cdef extern from "<signal.h>":
+    cdef union sigval:
+        int sival_int
+        void *sival_ptr
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (cdef_union_definition
+        kind: (identifier)
+        name: (identifier)
+        body: (block
+          (c_variable_declaration
+            type: (c_type
+              (identifier))
+            declarator: (c_declarator
+              name: (identifier)))
+          (c_variable_declaration
+            type: (c_type
+              (identifier)
+              suffix: (c_pointer_declarator))
+            declarator: (c_declarator
+              name: (identifier))))))))
+
+================================================================================
+Third party - cdef enum body
+================================================================================
+
+cdef enum NPY_TYPES:
+    NPY_BOOL
+    NPY_BYTE
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_enum_definition
+    name: (identifier)
+    body: (block
+      (c_enum_member
+        name: (identifier))
+      (c_enum_member
+        name: (identifier)))))
+
+================================================================================
+Third party - anonymous cdef enum body
+================================================================================
+
+cdef extern from "Python.h":
+    cdef enum:
+        PyBUF_SIMPLE
+        PyBUF_WRITABLE
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (cdef_enum_definition
+        body: (block
+          (c_enum_member
+            name: (identifier))
+          (c_enum_member
+            name: (identifier)))))))
+
+================================================================================
+Third party - ctypedef enum values
+================================================================================
+
+cdef extern from "libxml/tree.h":
+    ctypedef enum xmlElementType:
+        XML_ELEMENT_NODE = 1
+        XML_TEXT_NODE = 3
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (ctypedef_enum_definition
+        kind: (identifier)
+        name: (identifier)
+        body: (block
+          (c_enum_member
+            name: (identifier)
+            value: (integer))
+          (c_enum_member
+            name: (identifier)
+            value: (integer)))))))
+
+================================================================================
+Third party - unnamed C parameters
+================================================================================
+
+cdef extern from "math.h":
+    float acosf(float)
+    void *dlopen(const char *, int)
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (c_function_declaration
+        return_type: (c_type
+          (identifier))
+        name: (identifier)
+        parameters: (c_parameters
+          (c_parameter
+            type: (c_type
+              (identifier)))))
+      (c_function_declaration
+        return_type: (c_type
+          (identifier)
+          suffix: (c_pointer_declarator))
+        name: (identifier)
+        parameters: (c_parameters
+          (c_parameter
+            type: (c_type
+              (identifier)
+              suffix: (c_pointer_declarator)))
+          (c_parameter
+            type: (c_type
+              (identifier))))))))
+
+================================================================================
+Third party - C varargs declaration
+================================================================================
+
+cdef extern from "Python.h":
+    object PyErr_Format(object exception, char *format, ...)
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (c_function_declaration
+        return_type: (c_type
+          (identifier))
+        name: (identifier)
+        parameters: (c_parameters
+          (c_parameter
+            type: (c_type
+              (identifier))
+            name: (identifier))
+          (c_parameter
+            type: (c_type
+              (identifier)
+              suffix: (c_pointer_declarator))
+            name: (identifier))
+          (c_variadic_parameter))))))
+
+================================================================================
+Third party - function pointer typedef
+================================================================================
+
+ctypedef void (*xmlGenericErrorFunc)(void* ctxt, char* msg, ...) nogil
+
+--------------------------------------------------------------------------------
+
+(module
+  (ctypedef_statement
+    type: (c_function_pointer_type
+      return_type: (c_type
+        (identifier))
+      name: (identifier)
+      parameters: (c_parameters
+        (c_parameter
+          type: (c_type
+            (identifier)
+            suffix: (c_pointer_declarator))
+          name: (identifier))
+        (c_parameter
+          type: (c_type
+            (identifier)
+            suffix: (c_pointer_declarator))
+          name: (identifier))
+        (c_variadic_parameter)))))
+
+================================================================================
+Third party - function pointer parameter
+================================================================================
+
+cdef extern from "<stdlib.h>":
+    int atexit(void (*function)())
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (c_function_declaration
+        return_type: (c_type
+          (identifier))
+        name: (identifier)
+        parameters: (c_parameters
+          (c_parameter
+            type: (c_function_pointer_type
+              return_type: (c_type
+                (identifier))
+              name: (identifier)
+              parameters: (c_parameters))))))))
+
+================================================================================
+Third party - C array declarators
+================================================================================
+
+cdef int values[3]
+cdef PyObject* objects[3]
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_statement
+    type: (c_type
+      (identifier))
+    declarator: (c_declarator
+      name: (identifier)
+      suffix: (c_array_declarator
+        size: (integer))))
+  (cdef_statement
+    type: (c_type
+      (identifier)
+      suffix: (c_pointer_declarator))
+    declarator: (c_declarator
+      name: (identifier)
+      suffix: (c_array_declarator
+        size: (integer)))))
+
+================================================================================
+Third party - typed cdef block
+================================================================================
+
+cdef:
+    int x
+    PyObject* objects[3]
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_block
+    body: (block
+      (c_variable_declaration
+        type: (c_type
+          (identifier))
+        declarator: (c_declarator
+          name: (identifier)))
+      (c_variable_declaration
+        type: (c_type
+          (identifier)
+          suffix: (c_pointer_declarator))
+        declarator: (c_declarator
+          name: (identifier)
+          suffix: (c_array_declarator
+            size: (integer)))))))
+
+================================================================================
+Third party - dotted C types
+================================================================================
+
+cdef tree.xmlNode* c_node
+ctypedef np.npy_bool bool_t
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_statement
+    type: (c_type
+      (dotted_name
+        (identifier)
+        (identifier))
+      suffix: (c_pointer_declarator))
+    declarator: (c_declarator
+      name: (identifier)))
+  (ctypedef_statement
+    type: (c_type
+      (dotted_name
+        (identifier)
+        (identifier)))
+    name: (identifier)))
+
+================================================================================
+Third party - untyped public class attributes
+================================================================================
+
+cdef class Scanner:
+    cdef public stream
+    cdef public name
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_class_definition
+    name: (identifier)
+    body: (block
+      (cdef_attribute_declaration
+        visibility: (identifier)
+        name: (identifier))
+      (cdef_attribute_declaration
+        visibility: (identifier)
+        name: (identifier)))))
+
+================================================================================
+Third party - pxd cdef and cpdef method declarations
+================================================================================
+
+cdef class Action:
+    cdef perform(self, token_stream, text)
+    cpdef add(self, event, new_state)
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_class_definition
+    name: (identifier)
+    body: (block
+      (cdef_method_declaration
+        name: (identifier)
+        parameters: (c_parameters
+          (c_parameter
+            name: (identifier))
+          (c_parameter
+            name: (identifier))
+          (c_parameter
+            name: (identifier))))
+      (cdef_method_declaration
+        name: (identifier)
+        parameters: (c_parameters
+          (c_parameter
+            name: (identifier))
+          (c_parameter
+            name: (identifier))
+          (c_parameter
+            name: (identifier)))))))
+
+================================================================================
+Third party - pxd default star parameter
+================================================================================
+
+cdef class UtilityCodeBase:
+    cpdef format_code(self, code_string, replace_empty_lines=*)
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_class_definition
+    name: (identifier)
+    body: (block
+      (cdef_method_declaration
+        name: (identifier)
+        parameters: (c_parameters
+          (c_parameter
+            name: (identifier))
+          (c_parameter
+            name: (identifier))
+          (c_parameter
+            name: (identifier)
+            default: (c_default_star)))))))
+
+================================================================================
+Third party - ctypedef extension class
+================================================================================
+
+ctypedef class __builtin__.bool [object PyLongObject]:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (ctypedef_class_definition
+    name: (dotted_name
+      (identifier)
+      (identifier))
+    layout: (extension_class_layout
+      object: (identifier))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Third party - ctypedef extern extension class
+================================================================================
+
+ctypedef extern class datetime.date[object PyDateTime_Date]:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (ctypedef_class_definition
+    modifier: (identifier)
+    name: (dotted_name
+      (identifier)
+      (identifier))
+    layout: (extension_class_layout
+      object: (identifier))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Third party - public extension class with cname spec
+================================================================================
+
+cdef public class ElementBase(_Element) [type LxmlElementBaseType, object LxmlElementBase]:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_class_definition
+    visibility: (identifier)
+    name: (identifier)
+    superclasses: (argument_list
+      (identifier))
+    layout: (extension_class_layout
+      type: (identifier)
+      object: (identifier))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Third party - cdef public api function
+================================================================================
+
+cdef public api _Element deepcopyNodeToDocument(_Document doc, xmlNode* c_root):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_function_definition
+    visibility: (identifier)
+    api: (identifier)
+    return_type: (c_type
+      (identifier))
+    name: (identifier)
+    parameters: (c_parameters
+      (c_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier))
+      (c_parameter
+        type: (c_type
+          (identifier)
+          suffix: (c_pointer_declarator))
+        name: (identifier)))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Third party - Cython typed Python parameter
+================================================================================
+
+def uniform_mean(Py_ssize_t n):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (cython_typed_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier)))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Third party - Cython typed keyword parameter
+================================================================================
+
+def strip_elements(tree_or_element, *tag_names, bint with_tail=True):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (identifier)
+      (list_splat_pattern
+        (identifier))
+      (cython_typed_default_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier)
+        value: (true)))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Third party - Cython not None parameter
+================================================================================
+
+def __call__(self, _Element node not None):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (identifier)
+      (cython_typed_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier)
+        not_none: (none)))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Third party - C cast expression
+================================================================================
+
+value = <long>c_node
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    left: (identifier)
+    right: (c_cast
+      type: (c_type
+        (identifier))
+      value: (identifier))))
+
+================================================================================
+Third party - dotted pointer C cast expression
+================================================================================
+
+return <xpath.xmlXPathContext*>ctxt
+
+--------------------------------------------------------------------------------
+
+(module
+  (return_statement
+    (c_cast
+      type: (c_type
+        (dotted_name
+          (identifier)
+          (identifier))
+        suffix: (c_pointer_declarator))
+      value: (identifier))))
+
+================================================================================
+Third party - C char literal prefix
+================================================================================
+
+s = cstring_h.strrchr(c_name, c'.')
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    left: (identifier)
+    right: (call
+      function: (attribute
+        object: (identifier)
+        attribute: (identifier))
+      arguments: (argument_list
+        (identifier)
+        (c_string
+          (string_start)
+          (string_content)
+          (string_end))))))
+
+================================================================================
+Third party - function with gil modifier
+================================================================================
+
+cdef int callback(int *error) with gil:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_function_definition
+    return_type: (c_type
+      (identifier))
+    name: (identifier)
+    parameters: (c_parameters
+      (c_parameter
+        type: (c_type
+          (identifier)
+          suffix: (c_pointer_declarator))
+        name: (identifier)))
+    gil_specifier: (identifier)
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Third party - extern declaration statement
+================================================================================
+
+extern void omp_set_num_threads(int) nogil
+
+--------------------------------------------------------------------------------
+
+(module
+  (extern_statement
+    declaration: (c_function_declaration
+      return_type: (c_type
+        (identifier))
+      name: (identifier)
+      parameters: (c_parameters
+        (c_parameter
+          type: (c_type
+            (identifier))))
+      nogil: (identifier))))
+
+================================================================================
+Third party - Cython utility template placeholders
+================================================================================
+
+cdef extern from *:
+    object {{enum_to_pyint_func}}({{name}} value)
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    body: (block
+      (c_function_declaration
+        return_type: (c_type
+          (identifier))
+        name: (cython_template_placeholder
+          (identifier))
+        parameters: (c_parameters
+          (c_parameter
+            type: (cython_template_placeholder
+              (identifier))
+            name: (identifier)))))))
+
+================================================================================
+Third party - inline C code in extern block
+================================================================================
+
+cdef extern from *:
+    """
+    #include <threads.h>
+    """
+    int thrd_success
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    body: (block
+      (expression_statement
+        (string
+          (string_start)
+          (string_content)
+          (string_end)))
+      (c_variable_declaration
+        type: (c_type
+          (identifier))
+        declarator: (c_declarator
+          name: (identifier))))))
+
+================================================================================
+Third party - C alias function declaration
+================================================================================
+
+cdef extern from "Python.h":
+    object PyContextVar_New_with_default "PyContextVar_New" (const char* name, object default_value)
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (c_function_declaration
+        return_type: (c_type
+          (identifier))
+        name: (identifier)
+        cname: (string
+          (string_start)
+          (string_content)
+          (string_end))
+        parameters: (c_parameters
+          (c_parameter
+            type: (c_type
+              (identifier)
+              suffix: (c_pointer_declarator))
+            name: (identifier))
+          (c_parameter
+            type: (c_type
+              (identifier))
+            name: (identifier)))))))
+
+================================================================================
+Third party - C alias object declaration
+================================================================================
+
+cdef object __pyx_collections_abc_Sequence "__pyx_collections_abc_Sequence"
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_statement
+    type: (c_type
+      (identifier))
+    declarator: (c_declarator
+      name: (identifier)
+      cname: (string
+        (string_start)
+        (string_content)
+        (string_end)))))
+
+================================================================================
+Third party - noexcept function pointer typedef
+================================================================================
+
+ctypedef void (*sighandler_t)(int SIGNUM) noexcept nogil
+
+--------------------------------------------------------------------------------
+
+(module
+  (ctypedef_statement
+    type: (c_function_pointer_type
+      return_type: (c_type
+        (identifier))
+      name: (identifier)
+      parameters: (c_parameters
+        (c_parameter
+          type: (c_type
+            (identifier))
+          name: (identifier)))
+      noexcept: (identifier)
+      nogil: (identifier))))
