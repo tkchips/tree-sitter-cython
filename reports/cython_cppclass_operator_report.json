@@ -1,0 +1,405 @@
+{
+  "cython_version": "Cython version 0.29.14",
+  "results": [
+    {
+      "category": "Arithmetic",
+      "name": "unary +",
+      "declaration": "Ops operator+() except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Arithmetic",
+      "name": "unary -",
+      "declaration": "Ops operator-() except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Arithmetic",
+      "name": "binary +",
+      "declaration": "Ops operator+(Ops) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Arithmetic",
+      "name": "binary -",
+      "declaration": "Ops operator-(Ops) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Arithmetic",
+      "name": "binary *",
+      "declaration": "Ops operator*(Ops) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Arithmetic",
+      "name": "binary /",
+      "declaration": "Ops operator/(Ops) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Arithmetic",
+      "name": "binary %",
+      "declaration": "Ops operator%(Ops) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Bitwise",
+      "name": "unary ~",
+      "declaration": "Ops operator~() except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Bitwise",
+      "name": "binary &",
+      "declaration": "Ops operator&(Ops) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Bitwise",
+      "name": "binary |",
+      "declaration": "Ops operator|(Ops) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Bitwise",
+      "name": "binary ^",
+      "declaration": "Ops operator^(Ops) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Shift",
+      "name": "binary <<",
+      "declaration": "Ops operator<<(int) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Shift",
+      "name": "binary >>",
+      "declaration": "Ops operator>>(int) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Assignment",
+      "name": "operator =",
+      "declaration": "Ops& operator=(Ops) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Assignment",
+      "name": "operator +=",
+      "declaration": "Ops& operator+=(Ops) except +",
+      "supported": false,
+      "message": "ops_operator.pxd:4:23: Overloading operator '+=' not yet supported.",
+      "note": ""
+    },
+    {
+      "category": "Assignment",
+      "name": "operator -=",
+      "declaration": "Ops& operator-=(Ops) except +",
+      "supported": false,
+      "message": "ops_operator.pxd:4:23: Overloading operator '-=' not yet supported.",
+      "note": ""
+    },
+    {
+      "category": "Assignment",
+      "name": "operator *=",
+      "declaration": "Ops& operator*=(Ops) except +",
+      "supported": false,
+      "message": "ops_operator.pxd:4:23: Overloading operator '*=' not yet supported.",
+      "note": ""
+    },
+    {
+      "category": "Assignment",
+      "name": "operator /=",
+      "declaration": "Ops& operator/=(Ops) except +",
+      "supported": false,
+      "message": "ops_operator.pxd:4:23: Overloading operator '/=' not yet supported.",
+      "note": ""
+    },
+    {
+      "category": "Assignment",
+      "name": "operator %=",
+      "declaration": "Ops& operator%=(Ops) except +",
+      "supported": false,
+      "message": "ops_operator.pxd:4:23: Overloading operator '%=' not yet supported.",
+      "note": ""
+    },
+    {
+      "category": "Assignment",
+      "name": "operator &=",
+      "declaration": "Ops& operator&=(Ops) except +",
+      "supported": false,
+      "message": "ops_operator.pxd:4:23: Overloading operator '&=' not yet supported.",
+      "note": ""
+    },
+    {
+      "category": "Assignment",
+      "name": "operator |=",
+      "declaration": "Ops& operator|=(Ops) except +",
+      "supported": false,
+      "message": "ops_operator.pxd:4:23: Overloading operator '|=' not yet supported.",
+      "note": ""
+    },
+    {
+      "category": "Assignment",
+      "name": "operator ^=",
+      "declaration": "Ops& operator^=(Ops) except +",
+      "supported": false,
+      "message": "ops_operator.pxd:4:23: Overloading operator '^=' not yet supported.",
+      "note": ""
+    },
+    {
+      "category": "Assignment",
+      "name": "operator <<=",
+      "declaration": "Ops& operator<<=(int) except +",
+      "supported": false,
+      "message": "ops_operator.pxd:4:24: Overloading operator '<<=' not yet supported.",
+      "note": ""
+    },
+    {
+      "category": "Assignment",
+      "name": "operator >>=",
+      "declaration": "Ops& operator>>=(int) except +",
+      "supported": false,
+      "message": "ops_operator.pxd:4:24: Overloading operator '>>=' not yet supported.",
+      "note": ""
+    },
+    {
+      "category": "Comparison",
+      "name": "operator ==",
+      "declaration": "bint operator==(Ops) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Comparison",
+      "name": "operator !=",
+      "declaration": "bint operator!=(Ops) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Comparison",
+      "name": "operator <",
+      "declaration": "bint operator<(Ops) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Comparison",
+      "name": "operator >",
+      "declaration": "bint operator>(Ops) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Comparison",
+      "name": "operator <=",
+      "declaration": "bint operator<=(Ops) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Comparison",
+      "name": "operator >=",
+      "declaration": "bint operator>=(Ops) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Logical",
+      "name": "operator !",
+      "declaration": "bint operator!() except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Logical",
+      "name": "operator &&",
+      "declaration": "bint operator&&(Ops) except +",
+      "supported": false,
+      "message": "ops_operator.pxd:4:23: Overloading operator '&&' not yet supported.",
+      "note": ""
+    },
+    {
+      "category": "Logical",
+      "name": "operator ||",
+      "declaration": "bint operator||(Ops) except +",
+      "supported": false,
+      "message": "ops_operator.pxd:4:23: Overloading operator '||' not yet supported.",
+      "note": ""
+    },
+    {
+      "category": "Increment",
+      "name": "prefix ++",
+      "declaration": "Ops& operator++() except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Increment",
+      "name": "postfix ++",
+      "declaration": "Ops operator++(int) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Increment",
+      "name": "prefix --",
+      "declaration": "Ops& operator--() except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Increment",
+      "name": "postfix --",
+      "declaration": "Ops operator--(int) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Access",
+      "name": "operator []",
+      "declaration": "int operator[](int) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Access",
+      "name": "operator ()",
+      "declaration": "int operator()() except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Access",
+      "name": "operator ,",
+      "declaration": "Ops operator,(Ops) except +",
+      "supported": true,
+      "message": "",
+      "note": ""
+    },
+    {
+      "category": "Pointer-like",
+      "name": "operator *",
+      "declaration": "int operator*() except +",
+      "supported": true,
+      "message": "",
+      "note": "Uses unary dereference form."
+    },
+    {
+      "category": "Pointer-like",
+      "name": "operator ->",
+      "declaration": "Ops operator->() except +",
+      "supported": false,
+      "message": "ops_operator.pxd:4:22: Overloading operator '->' not yet supported.",
+      "note": ""
+    },
+    {
+      "category": "Pointer-like",
+      "name": "operator ->*",
+      "declaration": "int operator->*(int) except +",
+      "supported": false,
+      "message": "ops_operator.pxd:4:22: Overloading operator '->' not yet supported.",
+      "note": "Probe focuses on parser acceptance, not C++ semantic correctness of the placeholder argument."
+    },
+    {
+      "category": "Memory",
+      "name": "operator new",
+      "declaration": "void* operator new(size_t) except +",
+      "supported": false,
+      "message": "ops_operator_new.pxd:5:23: Overloading operator 'new' not yet supported.",
+      "note": ""
+    },
+    {
+      "category": "Memory",
+      "name": "operator delete",
+      "declaration": "void operator delete(void*) except +",
+      "supported": false,
+      "message": "ops_operator_delete.pxd:4:22: Overloading operator 'delete' not yet supported.",
+      "note": ""
+    },
+    {
+      "category": "Memory",
+      "name": "operator new[]",
+      "declaration": "void* operator new[](size_t) except +",
+      "supported": false,
+      "message": "ops_operator_new.pxd:5:23: Overloading operator 'new' not yet supported.",
+      "note": ""
+    },
+    {
+      "category": "Memory",
+      "name": "operator delete[]",
+      "declaration": "void operator delete[](void*) except +",
+      "supported": false,
+      "message": "ops_operator_delete.pxd:4:22: Overloading operator 'delete' not yet supported.",
+      "note": ""
+    },
+    {
+      "category": "Conversion",
+      "name": "operator int",
+      "declaration": "int operator int() except +",
+      "supported": false,
+      "message": "ops_operator_int.pxd:4:21: Overloading operator 'int' not yet supported.",
+      "note": ""
+    },
+    {
+      "category": "C++20",
+      "name": "operator <=>",
+      "declaration": "int operator<=>(Ops) except +",
+      "supported": false,
+      "message": "ops_operator.pxd:4:22: Syntax error in C variable declaration",
+      "note": ""
+    },
+    {
+      "category": "C++20",
+      "name": "operator co_await",
+      "declaration": "Ops operator co_await() except +",
+      "supported": false,
+      "message": "ops_operator_co_await.pxd:4:21: Overloading operator 'co_await' not yet supported.",
+      "note": ""
+    }
+  ]
+}
