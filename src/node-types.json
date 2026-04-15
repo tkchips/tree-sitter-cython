@@ -106,6 +106,10 @@
         "named": true
       },
       {
+        "type": "ctypedef_struct_declaration",
+        "named": true
+      },
+      {
         "type": "cython_def_statement",
         "named": true
       },
@@ -1017,6 +1021,10 @@
           {
             "type": "c_declaration_parameters",
             "named": true
+          },
+          {
+            "type": "c_parameters",
+            "named": true
           }
         ]
       },
@@ -1026,6 +1034,16 @@
         "types": [
           {
             "type": "c_type",
+            "named": true
+          }
+        ]
+      },
+      "type_parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "c_template_parameters",
             "named": true
           }
         ]
@@ -1990,6 +2008,32 @@
     }
   },
   {
+    "type": "ctypedef_struct_declaration",
+    "named": true,
+    "fields": {
+      "kind": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "ctypedef_struct_definition",
     "named": true,
     "fields": {
@@ -1999,6 +2043,16 @@
         "types": [
           {
             "type": "block",
+            "named": true
+          }
+        ]
+      },
+      "cname": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string",
             "named": true
           }
         ]

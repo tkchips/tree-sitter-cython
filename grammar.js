@@ -1424,13 +1424,23 @@ module.exports = grammar({
       ),
     ),
 
-    // bare function declarations inside extern blocks: `double sin(double x)`
-    c_function_declaration: $ => prec(PREC.cdef, seq(
-      field('return_type', $.c_type),
-      field('name', $.identifier),
-      field('parameters', $.c_declaration_parameters),
-      optional('nogil'),
-      optional(field('except_clause', $.cdef_except_clause)),
+    // bare function declarations inside extern blocks: `T sin[T](T x)`
+    c_function_declaration: $ => prec(PREC.cdef, choice(
+      seq(
+        field('return_type', $.c_type),
+        field('name', $.identifier),
+        field('type_parameters', $.c_template_parameters),
+        field('parameters', $.c_parameters),
+        optional('nogil'),
+        optional(field('except_clause', $.cdef_except_clause)),
+      ),
+      seq(
+        field('return_type', $.c_type),
+        field('name', $.identifier),
+        field('parameters', $.c_declaration_parameters),
+        optional('nogil'),
+        optional(field('except_clause', $.cdef_except_clause)),
+      ),
     )),
 
     // Custom suite for cdef extern blocks and ctypedef struct/union/enum bodies
