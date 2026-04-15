@@ -1,0 +1,644 @@
+================================================================================
+Cimport statements
+================================================================================
+
+cimport cython
+cimport numpy as np
+cimport a.b.c
+
+--------------------------------------------------------------------------------
+
+(module
+  (cimport_statement
+    (dotted_name
+      (identifier)))
+  (cimport_statement
+    (aliased_import
+      (dotted_name
+        (identifier))
+      (identifier)))
+  (cimport_statement
+    (dotted_name
+      (identifier)
+      (identifier)
+      (identifier))))
+
+================================================================================
+Cimport from statements
+================================================================================
+
+from libc.math cimport sin, cos
+from cpython cimport PyObject
+from libc cimport *
+from . cimport something
+
+--------------------------------------------------------------------------------
+
+(module
+  (cimport_from_statement
+    module_name: (dotted_name
+      (identifier)
+      (identifier))
+    name: (dotted_name
+      (identifier))
+    name: (dotted_name
+      (identifier)))
+  (cimport_from_statement
+    module_name: (dotted_name
+      (identifier))
+    name: (dotted_name
+      (identifier)))
+  (cimport_from_statement
+    module_name: (dotted_name
+      (identifier))
+    (wildcard_import))
+  (cimport_from_statement
+    module_name: (relative_import
+      (import_prefix))
+    name: (dotted_name
+      (identifier))))
+
+================================================================================
+Cimport as identifier (backward compat)
+================================================================================
+
+x = cimport
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    left: (identifier)
+    right: (identifier)))
+
+================================================================================
+Cdef variable declarations
+================================================================================
+
+cdef int x = 5
+cdef double y
+cdef int a, b, c
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_statement
+    type: (c_type
+      (identifier))
+    declarator: (c_declarator
+      name: (identifier)
+      value: (integer)))
+  (cdef_statement
+    type: (c_type
+      (identifier))
+    declarator: (c_declarator
+      name: (identifier)))
+  (cdef_statement
+    type: (c_type
+      (identifier))
+    declarator: (c_declarator
+      name: (identifier))
+    declarator: (c_declarator
+      name: (identifier))
+    declarator: (c_declarator
+      name: (identifier))))
+
+================================================================================
+Cdef with unsigned types
+================================================================================
+
+cdef unsigned long count
+cdef unsigned long long big
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_statement
+    type: (c_type
+      (identifier)
+      (identifier))
+    declarator: (c_declarator
+      name: (identifier)))
+  (cdef_statement
+    type: (c_type
+      (identifier)
+      (identifier)
+      (identifier))
+    declarator: (c_declarator
+      name: (identifier))))
+
+================================================================================
+Cdef with pointer types
+================================================================================
+
+cdef int* ptr
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_statement
+    type: (c_type
+      (identifier)
+      suffix: (c_pointer_declarator))
+    declarator: (c_declarator
+      name: (identifier))))
+
+================================================================================
+Cdef with memoryview types
+================================================================================
+
+cdef int[:] memview
+cdef int[:, :] memview2d
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_statement
+    type: (c_type
+      (identifier)
+      suffix: (c_memoryview_declarator))
+    declarator: (c_declarator
+      name: (identifier)))
+  (cdef_statement
+    type: (c_type
+      (identifier)
+      suffix: (c_memoryview_declarator))
+    declarator: (c_declarator
+      name: (identifier))))
+
+================================================================================
+Cdef with visibility modifiers
+================================================================================
+
+cdef readonly int ro_attr
+cdef public int pub_attr
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_statement
+    type: (c_type
+      (identifier))
+    declarator: (c_declarator
+      name: (identifier)))
+  (cdef_statement
+    type: (c_type
+      (identifier))
+    declarator: (c_declarator
+      name: (identifier))))
+
+================================================================================
+Cdef function definitions
+================================================================================
+
+cdef int func(int a, double b):
+    return a
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_function_definition
+    return_type: (c_type
+      (identifier))
+    name: (identifier)
+    parameters: (c_parameters
+      (c_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier))
+      (c_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier)))
+    body: (block
+      (return_statement
+        (identifier)))))
+
+================================================================================
+Cpdef function definitions
+================================================================================
+
+cpdef int hybrid_func(int x):
+    return x * 2
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_function_definition
+    return_type: (c_type
+      (identifier))
+    name: (identifier)
+    parameters: (c_parameters
+      (c_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier)))
+    body: (block
+      (return_statement
+        (binary_operator
+          left: (identifier)
+          right: (integer))))))
+
+================================================================================
+Cdef inline function
+================================================================================
+
+cdef inline int fast_func(int x):
+    return x
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_function_definition
+    return_type: (c_type
+      (identifier))
+    name: (identifier)
+    parameters: (c_parameters
+      (c_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier)))
+    body: (block
+      (return_statement
+        (identifier)))))
+
+================================================================================
+Cdef function with nogil
+================================================================================
+
+cdef int func() nogil:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_function_definition
+    return_type: (c_type
+      (identifier))
+    name: (identifier)
+    parameters: (c_parameters)
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Cdef api function
+================================================================================
+
+cdef api int exported_func():
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_function_definition
+    return_type: (c_type
+      (identifier))
+    name: (identifier)
+    parameters: (c_parameters)
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Cdef function with except clause
+================================================================================
+
+cdef int divide(int a, int b) except? -1:
+    return a // b
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_function_definition
+    return_type: (c_type
+      (identifier))
+    name: (identifier)
+    parameters: (c_parameters
+      (c_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier))
+      (c_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier)))
+    except_clause: (cdef_except_clause
+      (unary_operator
+        argument: (integer)))
+    body: (block
+      (return_statement
+        (binary_operator
+          left: (identifier)
+          right: (identifier))))))
+
+================================================================================
+Cdef class definition
+================================================================================
+
+cdef class MyClass:
+    cdef int attr
+    cdef readonly int ro_attr
+
+    cpdef int method(self):
+        return self.attr
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_class_definition
+    name: (identifier)
+    body: (block
+      (cdef_statement
+        type: (c_type
+          (identifier))
+        declarator: (c_declarator
+          name: (identifier)))
+      (cdef_statement
+        type: (c_type
+          (identifier))
+        declarator: (c_declarator
+          name: (identifier)))
+      (cdef_function_definition
+        return_type: (c_type
+          (identifier))
+        name: (identifier)
+        parameters: (c_parameters
+          (c_parameter
+            (identifier)))
+        body: (block
+          (return_statement
+            (attribute
+              object: (identifier)
+              attribute: (identifier))))))))
+
+================================================================================
+Cdef class with superclass
+================================================================================
+
+cdef class Derived(Base):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_class_definition
+    name: (identifier)
+    superclasses: (argument_list
+      (identifier))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Ctypedef simple
+================================================================================
+
+ctypedef int myint
+ctypedef unsigned long uint64
+
+--------------------------------------------------------------------------------
+
+(module
+  (ctypedef_statement
+    type: (c_type
+      (identifier))
+    name: (identifier))
+  (ctypedef_statement
+    type: (c_type
+      (identifier)
+      (identifier))
+    name: (identifier)))
+
+================================================================================
+Ctypedef struct
+================================================================================
+
+ctypedef struct Point:
+    int x
+    int y
+
+--------------------------------------------------------------------------------
+
+(module
+  (ctypedef_struct_definition
+    kind: (identifier)
+    name: (identifier)
+    body: (block
+      (c_variable_declaration
+        type: (c_type
+          (identifier))
+        declarator: (c_declarator
+          name: (identifier)))
+      (c_variable_declaration
+        type: (c_type
+          (identifier))
+        declarator: (c_declarator
+          name: (identifier))))))
+
+================================================================================
+Ctypedef fused
+================================================================================
+
+ctypedef fused number_t:
+    int
+    float
+    double
+
+--------------------------------------------------------------------------------
+
+(module
+  (ctypedef_fused_definition
+    name: (identifier)
+    body: (block
+      (identifier)
+      (identifier)
+      (identifier))))
+
+================================================================================
+Cdef extern block
+================================================================================
+
+cdef extern from "math.h":
+    double sin(double x)
+    double cos(double x)
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (c_function_declaration
+        return_type: (c_type
+          (identifier))
+        name: (identifier)
+        parameters: (c_declaration_parameters
+          (c_declaration_parameter
+            type: (c_type
+              (identifier))
+            name: (identifier))))
+      (c_function_declaration
+        return_type: (c_type
+          (identifier))
+        name: (identifier)
+        parameters: (c_declaration_parameters
+          (c_declaration_parameter
+            type: (c_type
+              (identifier))
+            name: (identifier)))))))
+
+================================================================================
+Cdef extern block with nogil
+================================================================================
+
+cdef extern from "header.h" nogil:
+    void func()
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (c_function_declaration
+        return_type: (c_type
+          (identifier))
+        name: (identifier)
+        parameters: (c_declaration_parameters)))))
+
+================================================================================
+Cdef extern from wildcard
+================================================================================
+
+cdef extern from *:
+    ctypedef int size_t
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    body: (block
+      (ctypedef_statement
+        type: (c_type
+          (identifier))
+        name: (identifier)))))
+
+================================================================================
+Compile-time DEF
+================================================================================
+
+DEF PI = 3.14159
+DEF N = 100
+
+--------------------------------------------------------------------------------
+
+(module
+  (cython_def_statement
+    name: (identifier)
+    value: (float))
+  (cython_def_statement
+    name: (identifier)
+    value: (integer)))
+
+================================================================================
+Compile-time IF/ELIF/ELSE
+================================================================================
+
+IF UNAME_SYSNAME == "Windows":
+    pass
+ELIF UNAME_SYSNAME == "Linux":
+    pass
+ELSE:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cython_if_statement
+    condition: (comparison_operator
+      (identifier)
+      (string
+        (string_start)
+        (string_content)
+        (string_end)))
+    consequence: (block
+      (pass_statement))
+    alternative: (cython_elif_clause
+      condition: (comparison_operator
+        (identifier)
+        (string
+          (string_start)
+          (string_content)
+          (string_end)))
+      consequence: (block
+        (pass_statement)))
+    alternative: (cython_else_clause
+      body: (block
+        (pass_statement)))))
+
+================================================================================
+Include statement
+================================================================================
+
+include "filename.pxi"
+
+--------------------------------------------------------------------------------
+
+(module
+  (cython_include_statement
+    path: (string
+      (string_start)
+      (string_content)
+      (string_end))))
+
+================================================================================
+Legacy property syntax
+================================================================================
+
+property x:
+    def __get__(self):
+        return 1
+
+--------------------------------------------------------------------------------
+
+(module
+  (cython_property_definition
+    name: (identifier)
+    body: (block
+      (function_definition
+        name: (identifier)
+        parameters: (parameters
+          (identifier))
+        body: (block
+          (return_statement
+            (integer)))))))
+
+================================================================================
+Nogil/gil with blocks
+================================================================================
+
+with nogil:
+    pass
+
+with gil:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (with_statement
+    (with_clause
+      (with_item
+        value: (identifier)))
+    body: (block
+      (pass_statement)))
+  (with_statement
+    (with_clause
+      (with_item
+        value: (identifier)))
+    body: (block
+      (pass_statement))))

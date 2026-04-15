@@ -1,83 +1,490 @@
 ================================================================================
-Cimport statements
+cdef extern namespace option
 ================================================================================
 
-cimport cython
-cimport numpy as np
-cimport a.b.c
+cdef extern from "<vector>" namespace "std" nogil:
+    pass
 
 --------------------------------------------------------------------------------
 
 (module
-  (cimport_statement
-    (dotted_name
-      (identifier)))
-  (cimport_statement
-    (aliased_import
-      (dotted_name
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    namespace: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+C++ cppclass template
+================================================================================
+
+cdef extern from "<vector>" namespace "std":
+    cdef cppclass vector[T, ALLOCATOR=*]:
+        ctypedef T value_type
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    namespace: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (cpp_class_definition
+        name: (identifier)
+        type_parameters: (c_template_parameters
+          (identifier)
+          (default_type_parameter
+            name: (identifier)))
+        body: (block
+          (ctypedef_statement
+            type: (c_type
+              (identifier))
+            name: (identifier)))))))
+
+================================================================================
+C++ constructors, operators, and except plus
+================================================================================
+
+cdef extern from "<vector>" namespace "std":
+    cdef cppclass iterator:
+        iterator() except +
+        T& operator*()
+        bint operator==(iterator)
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    namespace: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (cpp_class_definition
+        name: (identifier)
+        body: (block
+          (cpp_constructor_declaration
+            name: (identifier)
+            parameters: (c_declaration_parameters)
+            except_clause: (cdef_except_clause))
+          (cpp_operator_declaration
+            return_type: (c_type
+              (identifier)
+              suffix: (c_reference_declarator))
+            operator: (cpp_operator)
+            parameters: (c_declaration_parameters))
+          (cpp_operator_declaration
+            return_type: (c_type
+              (identifier))
+            operator: (cpp_operator)
+            parameters: (c_declaration_parameters
+              (c_declaration_parameter
+                type: (c_type
+                  (identifier))))))))))
+
+================================================================================
+templated C function declaration
+================================================================================
+
+cdef extern from "<algorithm>" namespace "std":
+    bool all_of[Iter, Pred](Iter first, Iter last, Pred pred)
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    namespace: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (c_function_declaration
+        return_type: (c_type
+          (identifier))
+        name: (identifier)
+        type_parameters: (c_template_parameters
+          (identifier)
+          (identifier))
+        parameters: (c_parameters
+          (c_parameter
+            type: (c_type
+              (identifier))
+            name: (identifier))
+          (c_parameter
+            type: (c_type
+              (identifier))
+            name: (identifier))
+          (c_parameter
+            type: (c_type
+              (identifier))
+            name: (identifier)))))))
+
+================================================================================
+forward ctypedef struct
+================================================================================
+
+cdef extern from "Python.h":
+    ctypedef struct PyObject
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (ctypedef_struct_declaration
+        kind: (identifier)
+        name: (identifier)))))
+
+================================================================================
+renamed ctypedef struct body
+================================================================================
+
+cdef extern from *:
+    ctypedef struct __pyx_memoryview "__pyx_memoryview_obj":
+        Py_buffer view
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    body: (block
+      (ctypedef_struct_definition
+        kind: (identifier)
+        name: (identifier)
+        cname: (string
+          (string_start)
+          (string_content)
+          (string_end))
+        body: (block
+          (c_variable_declaration
+            type: (c_type
+              (identifier))
+            declarator: (c_declarator
+              name: (identifier))))))))
+
+================================================================================
+cdef struct body
+================================================================================
+
+cdef extern from "<time.h>":
+    cdef struct timespec:
+        time_t tv_sec
+        long tv_nsec
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (cdef_struct_definition
+        kind: (identifier)
+        name: (identifier)
+        body: (block
+          (c_variable_declaration
+            type: (c_type
+              (identifier))
+            declarator: (c_declarator
+              name: (identifier)))
+          (c_variable_declaration
+            type: (c_type
+              (identifier))
+            declarator: (c_declarator
+              name: (identifier))))))))
+
+================================================================================
+bare struct body
+================================================================================
+
+cdef extern from "<time.h>":
+    struct timespec:
+        time_t tv_sec
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (c_struct_definition
+        kind: (identifier)
+        name: (identifier)
+        body: (block
+          (c_variable_declaration
+            type: (c_type
+              (identifier))
+            declarator: (c_declarator
+              name: (identifier))))))))
+
+================================================================================
+cdef union body
+================================================================================
+
+cdef extern from "<signal.h>":
+    cdef union sigval:
+        int sival_int
+        void *sival_ptr
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (cdef_union_definition
+        kind: (identifier)
+        name: (identifier)
+        body: (block
+          (c_variable_declaration
+            type: (c_type
+              (identifier))
+            declarator: (c_declarator
+              name: (identifier)))
+          (c_variable_declaration
+            type: (c_type
+              (identifier)
+              suffix: (c_pointer_declarator))
+            declarator: (c_declarator
+              name: (identifier))))))))
+
+================================================================================
+cdef enum body
+================================================================================
+
+cdef enum NPY_TYPES:
+    NPY_BOOL
+    NPY_BYTE
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_enum_definition
+    name: (identifier)
+    body: (block
+      (c_enum_member
+        name: (identifier))
+      (c_enum_member
+        name: (identifier)))))
+
+================================================================================
+anonymous cdef enum body
+================================================================================
+
+cdef extern from "Python.h":
+    cdef enum:
+        PyBUF_SIMPLE
+        PyBUF_WRITABLE
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (cdef_enum_definition
+        body: (block
+          (c_enum_member
+            name: (identifier))
+          (c_enum_member
+            name: (identifier)))))))
+
+================================================================================
+ctypedef enum values
+================================================================================
+
+cdef extern from "libxml/tree.h":
+    ctypedef enum xmlElementType:
+        XML_ELEMENT_NODE = 1
+        XML_TEXT_NODE = 3
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (ctypedef_enum_definition
+        kind: (identifier)
+        name: (identifier)
+        body: (block
+          (c_enum_member
+            name: (identifier)
+            value: (integer))
+          (c_enum_member
+            name: (identifier)
+            value: (integer)))))))
+
+================================================================================
+unnamed C parameters
+================================================================================
+
+cdef extern from "math.h":
+    float acosf(float)
+    void *dlopen(const char *, int)
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (c_function_declaration
+        return_type: (c_type
+          (identifier))
+        name: (identifier)
+        parameters: (c_parameters
+          (c_parameter
+            type: (c_type
+              (identifier)))))
+      (c_function_declaration
+        return_type: (c_type
+          (identifier)
+          suffix: (c_pointer_declarator))
+        name: (identifier)
+        parameters: (c_parameters
+          (c_parameter
+            type: (c_type
+              (identifier)
+              suffix: (c_pointer_declarator)))
+          (c_parameter
+            type: (c_type
+              (identifier))))))))
+
+================================================================================
+C varargs declaration
+================================================================================
+
+cdef extern from "Python.h":
+    object PyErr_Format(object exception, char *format, ...)
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (c_function_declaration
+        return_type: (c_type
+          (identifier))
+        name: (identifier)
+        parameters: (c_parameters
+          (c_parameter
+            type: (c_type
+              (identifier))
+            name: (identifier))
+          (c_parameter
+            type: (c_type
+              (identifier)
+              suffix: (c_pointer_declarator))
+            name: (identifier))
+          (c_variadic_parameter))))))
+
+================================================================================
+function pointer typedef
+================================================================================
+
+ctypedef void (*xmlGenericErrorFunc)(void* ctxt, char* msg, ...) nogil
+
+--------------------------------------------------------------------------------
+
+(module
+  (ctypedef_statement
+    type: (c_function_pointer_type
+      return_type: (c_type
         (identifier))
-      (identifier)))
-  (cimport_statement
-    (dotted_name
-      (identifier)
-      (identifier)
-      (identifier))))
+      name: (identifier)
+      parameters: (c_parameters
+        (c_parameter
+          type: (c_type
+            (identifier)
+            suffix: (c_pointer_declarator))
+          name: (identifier))
+        (c_parameter
+          type: (c_type
+            (identifier)
+            suffix: (c_pointer_declarator))
+          name: (identifier))
+        (c_variadic_parameter)))))
 
 ================================================================================
-Cimport from statements
+function pointer parameter
 ================================================================================
 
-from libc.math cimport sin, cos
-from cpython cimport PyObject
-from libc cimport *
-from . cimport something
+cdef extern from "<stdlib.h>":
+    int atexit(void (*function)())
 
 --------------------------------------------------------------------------------
 
 (module
-  (cimport_from_statement
-    module_name: (dotted_name
-      (identifier)
-      (identifier))
-    name: (dotted_name
-      (identifier))
-    name: (dotted_name
-      (identifier)))
-  (cimport_from_statement
-    module_name: (dotted_name
-      (identifier))
-    name: (dotted_name
-      (identifier)))
-  (cimport_from_statement
-    module_name: (dotted_name
-      (identifier))
-    (wildcard_import))
-  (cimport_from_statement
-    module_name: (relative_import
-      (import_prefix))
-    name: (dotted_name
-      (identifier))))
+  (cdef_extern_block
+    source: (string
+      (string_start)
+      (string_content)
+      (string_end))
+    body: (block
+      (c_function_declaration
+        return_type: (c_type
+          (identifier))
+        name: (identifier)
+        parameters: (c_parameters
+          (c_parameter
+            type: (c_function_pointer_type
+              return_type: (c_type
+                (identifier))
+              name: (identifier)
+              parameters: (c_parameters))))))))
 
 ================================================================================
-Cimport as identifier (backward compat)
+C array declarators
 ================================================================================
 
-x = cimport
-
---------------------------------------------------------------------------------
-
-(module
-  (assignment
-    left: (identifier)
-    right: (identifier)))
-
-================================================================================
-Cdef variable declarations
-================================================================================
-
-cdef int x = 5
-cdef double y
-cdef int a, b, c
+cdef int values[3]
+cdef PyObject* objects[3]
 
 --------------------------------------------------------------------------------
 
@@ -87,346 +494,445 @@ cdef int a, b, c
       (identifier))
     declarator: (c_declarator
       name: (identifier)
-      value: (integer)))
-  (cdef_statement
-    type: (c_type
-      (identifier))
-    declarator: (c_declarator
-      name: (identifier)))
-  (cdef_statement
-    type: (c_type
-      (identifier))
-    declarator: (c_declarator
-      name: (identifier))
-    declarator: (c_declarator
-      name: (identifier))
-    declarator: (c_declarator
-      name: (identifier))))
-
-================================================================================
-Cdef with unsigned types
-================================================================================
-
-cdef unsigned long count
-cdef unsigned long long big
-
---------------------------------------------------------------------------------
-
-(module
-  (cdef_statement
-    type: (c_type
-      (identifier)
-      (identifier))
-    declarator: (c_declarator
-      name: (identifier)))
-  (cdef_statement
-    type: (c_type
-      (identifier)
-      (identifier)
-      (identifier))
-    declarator: (c_declarator
-      name: (identifier))))
-
-================================================================================
-Cdef with pointer types
-================================================================================
-
-cdef int* ptr
-
---------------------------------------------------------------------------------
-
-(module
+      suffix: (c_array_declarator
+        size: (integer))))
   (cdef_statement
     type: (c_type
       (identifier)
       suffix: (c_pointer_declarator))
     declarator: (c_declarator
-      name: (identifier))))
+      name: (identifier)
+      suffix: (c_array_declarator
+        size: (integer)))))
 
 ================================================================================
-Cdef with memoryview types
+typed cdef block
 ================================================================================
 
-cdef int[:] memview
-cdef int[:, :] memview2d
-
---------------------------------------------------------------------------------
-
-(module
-  (cdef_statement
-    type: (c_type
-      (identifier)
-      suffix: (c_memoryview_declarator))
-    declarator: (c_declarator
-      name: (identifier)))
-  (cdef_statement
-    type: (c_type
-      (identifier)
-      suffix: (c_memoryview_declarator))
-    declarator: (c_declarator
-      name: (identifier))))
-
-================================================================================
-Cdef with visibility modifiers
-================================================================================
-
-cdef readonly int ro_attr
-cdef public int pub_attr
-
---------------------------------------------------------------------------------
-
-(module
-  (cdef_statement
-    type: (c_type
-      (identifier))
-    declarator: (c_declarator
-      name: (identifier)))
-  (cdef_statement
-    type: (c_type
-      (identifier))
-    declarator: (c_declarator
-      name: (identifier))))
-
-================================================================================
-Cdef function definitions
-================================================================================
-
-cdef int func(int a, double b):
-    return a
-
---------------------------------------------------------------------------------
-
-(module
-  (cdef_function_definition
-    return_type: (c_type
-      (identifier))
-    name: (identifier)
-    parameters: (c_parameters
-      (c_parameter
-        type: (c_type
-          (identifier))
-        name: (identifier))
-      (c_parameter
-        type: (c_type
-          (identifier))
-        name: (identifier)))
-    body: (block
-      (return_statement
-        (identifier)))))
-
-================================================================================
-Cpdef function definitions
-================================================================================
-
-cpdef int hybrid_func(int x):
-    return x * 2
-
---------------------------------------------------------------------------------
-
-(module
-  (cdef_function_definition
-    return_type: (c_type
-      (identifier))
-    name: (identifier)
-    parameters: (c_parameters
-      (c_parameter
-        type: (c_type
-          (identifier))
-        name: (identifier)))
-    body: (block
-      (return_statement
-        (binary_operator
-          left: (identifier)
-          right: (integer))))))
-
-================================================================================
-Cdef inline function
-================================================================================
-
-cdef inline int fast_func(int x):
-    return x
-
---------------------------------------------------------------------------------
-
-(module
-  (cdef_function_definition
-    return_type: (c_type
-      (identifier))
-    name: (identifier)
-    parameters: (c_parameters
-      (c_parameter
-        type: (c_type
-          (identifier))
-        name: (identifier)))
-    body: (block
-      (return_statement
-        (identifier)))))
-
-================================================================================
-Cdef function with nogil
-================================================================================
-
-cdef int func() nogil:
-    pass
-
---------------------------------------------------------------------------------
-
-(module
-  (cdef_function_definition
-    return_type: (c_type
-      (identifier))
-    name: (identifier)
-    parameters: (c_parameters)
-    body: (block
-      (pass_statement))))
-
-================================================================================
-Cdef api function
-================================================================================
-
-cdef api int exported_func():
-    pass
-
---------------------------------------------------------------------------------
-
-(module
-  (cdef_function_definition
-    return_type: (c_type
-      (identifier))
-    name: (identifier)
-    parameters: (c_parameters)
-    body: (block
-      (pass_statement))))
-
-================================================================================
-Cdef function with except clause
-================================================================================
-
-cdef int divide(int a, int b) except? -1:
-    return a // b
-
---------------------------------------------------------------------------------
-
-(module
-  (cdef_function_definition
-    return_type: (c_type
-      (identifier))
-    name: (identifier)
-    parameters: (c_parameters
-      (c_parameter
-        type: (c_type
-          (identifier))
-        name: (identifier))
-      (c_parameter
-        type: (c_type
-          (identifier))
-        name: (identifier)))
-    except_clause: (cdef_except_clause
-      (unary_operator
-        argument: (integer)))
-    body: (block
-      (return_statement
-        (binary_operator
-          left: (identifier)
-          right: (identifier))))))
-
-================================================================================
-Cdef class definition
-================================================================================
-
-cdef class MyClass:
-    cdef int attr
-    cdef readonly int ro_attr
-
-    cpdef int method(self):
-        return self.attr
-
---------------------------------------------------------------------------------
-
-(module
-  (cdef_class_definition
-    name: (identifier)
-    body: (block
-      (cdef_statement
-        type: (c_type
-          (identifier))
-        declarator: (c_declarator
-          name: (identifier)))
-      (cdef_statement
-        type: (c_type
-          (identifier))
-        declarator: (c_declarator
-          name: (identifier)))
-      (cdef_function_definition
-        return_type: (c_type
-          (identifier))
-        name: (identifier)
-        parameters: (c_parameters
-          (c_parameter
-            (identifier)))
-        body: (block
-          (return_statement
-            (attribute
-              object: (identifier)
-              attribute: (identifier))))))))
-
-================================================================================
-Cdef class with superclass
-================================================================================
-
-cdef class Derived(Base):
-    pass
-
---------------------------------------------------------------------------------
-
-(module
-  (cdef_class_definition
-    name: (identifier)
-    superclasses: (argument_list
-      (identifier))
-    body: (block
-      (pass_statement))))
-
-================================================================================
-Ctypedef simple
-================================================================================
-
-ctypedef int myint
-ctypedef unsigned long uint64
-
---------------------------------------------------------------------------------
-
-(module
-  (ctypedef_statement
-    type: (c_type
-      (identifier))
-    name: (identifier))
-  (ctypedef_statement
-    type: (c_type
-      (identifier)
-      (identifier))
-    name: (identifier)))
-
-================================================================================
-Ctypedef struct
-================================================================================
-
-ctypedef struct Point:
+cdef:
     int x
-    int y
+    PyObject* objects[3]
 
 --------------------------------------------------------------------------------
 
 (module
-  (ctypedef_struct_definition
-    kind: (identifier)
-    name: (identifier)
+  (cdef_block
     body: (block
       (c_variable_declaration
         type: (c_type
           (identifier))
         declarator: (c_declarator
           name: (identifier)))
+      (c_variable_declaration
+        type: (c_type
+          (identifier)
+          suffix: (c_pointer_declarator))
+        declarator: (c_declarator
+          name: (identifier)
+          suffix: (c_array_declarator
+            size: (integer)))))))
+
+================================================================================
+dotted C types
+================================================================================
+
+cdef tree.xmlNode* c_node
+ctypedef np.npy_bool bool_t
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_statement
+    type: (c_type
+      (dotted_name
+        (identifier)
+        (identifier))
+      suffix: (c_pointer_declarator))
+    declarator: (c_declarator
+      name: (identifier)))
+  (ctypedef_statement
+    type: (c_type
+      (dotted_name
+        (identifier)
+        (identifier)))
+    name: (identifier)))
+
+================================================================================
+untyped public class attributes
+================================================================================
+
+cdef class Scanner:
+    cdef public stream
+    cdef public name
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_class_definition
+    name: (identifier)
+    body: (block
+      (cdef_attribute_declaration
+        visibility: (identifier)
+        name: (identifier))
+      (cdef_attribute_declaration
+        visibility: (identifier)
+        name: (identifier)))))
+
+================================================================================
+pxd cdef and cpdef method declarations
+================================================================================
+
+cdef class Action:
+    cdef perform(self, token_stream, text)
+    cpdef add(self, event, new_state)
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_class_definition
+    name: (identifier)
+    body: (block
+      (cdef_method_declaration
+        name: (identifier)
+        parameters: (c_parameters
+          (c_parameter
+            name: (identifier))
+          (c_parameter
+            name: (identifier))
+          (c_parameter
+            name: (identifier))))
+      (cdef_method_declaration
+        name: (identifier)
+        parameters: (c_parameters
+          (c_parameter
+            name: (identifier))
+          (c_parameter
+            name: (identifier))
+          (c_parameter
+            name: (identifier)))))))
+
+================================================================================
+pxd default star parameter
+================================================================================
+
+cdef class UtilityCodeBase:
+    cpdef format_code(self, code_string, replace_empty_lines=*)
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_class_definition
+    name: (identifier)
+    body: (block
+      (cdef_method_declaration
+        name: (identifier)
+        parameters: (c_parameters
+          (c_parameter
+            name: (identifier))
+          (c_parameter
+            name: (identifier))
+          (c_parameter
+            name: (identifier)
+            default: (c_default_star)))))))
+
+================================================================================
+ctypedef extension class
+================================================================================
+
+ctypedef class __builtin__.bool [object PyLongObject]:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (ctypedef_class_definition
+    name: (dotted_name
+      (identifier)
+      (identifier))
+    layout: (extension_class_layout
+      object: (identifier))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+ctypedef extern extension class
+================================================================================
+
+ctypedef extern class datetime.date[object PyDateTime_Date]:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (ctypedef_class_definition
+    modifier: (identifier)
+    name: (dotted_name
+      (identifier)
+      (identifier))
+    layout: (extension_class_layout
+      object: (identifier))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+public extension class with cname spec
+================================================================================
+
+cdef public class ElementBase(_Element) [type LxmlElementBaseType, object LxmlElementBase]:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_class_definition
+    visibility: (identifier)
+    name: (identifier)
+    superclasses: (argument_list
+      (identifier))
+    layout: (extension_class_layout
+      type: (identifier)
+      object: (identifier))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+cdef public api function
+================================================================================
+
+cdef public api _Element deepcopyNodeToDocument(_Document doc, xmlNode* c_root):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_function_definition
+    visibility: (identifier)
+    api: (identifier)
+    return_type: (c_type
+      (identifier))
+    name: (identifier)
+    parameters: (c_parameters
+      (c_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier))
+      (c_parameter
+        type: (c_type
+          (identifier)
+          suffix: (c_pointer_declarator))
+        name: (identifier)))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Cython typed Python parameter
+================================================================================
+
+def uniform_mean(Py_ssize_t n):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (cython_typed_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier)))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Cython typed keyword parameter
+================================================================================
+
+def strip_elements(tree_or_element, *tag_names, bint with_tail=True):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (identifier)
+      (list_splat_pattern
+        (identifier))
+      (cython_typed_default_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier)
+        value: (true)))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Cython not None parameter
+================================================================================
+
+def __call__(self, _Element node not None):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (identifier)
+      (cython_typed_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier)
+        not_none: (none)))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+C cast expression
+================================================================================
+
+value = <long>c_node
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    left: (identifier)
+    right: (c_cast
+      type: (c_type
+        (identifier))
+      value: (identifier))))
+
+================================================================================
+dotted pointer C cast expression
+================================================================================
+
+return <xpath.xmlXPathContext*>ctxt
+
+--------------------------------------------------------------------------------
+
+(module
+  (return_statement
+    (c_cast
+      type: (c_type
+        (dotted_name
+          (identifier)
+          (identifier))
+        suffix: (c_pointer_declarator))
+      value: (identifier))))
+
+================================================================================
+C char literal prefix
+================================================================================
+
+s = cstring_h.strrchr(c_name, c'.')
+
+--------------------------------------------------------------------------------
+
+(module
+  (assignment
+    left: (identifier)
+    right: (call
+      function: (attribute
+        object: (identifier)
+        attribute: (identifier))
+      arguments: (argument_list
+        (identifier)
+        (c_string
+          (string_start)
+          (string_content)
+          (string_end))))))
+
+================================================================================
+function with gil modifier
+================================================================================
+
+cdef int callback(int *error) with gil:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_function_definition
+    return_type: (c_type
+      (identifier))
+    name: (identifier)
+    parameters: (c_parameters
+      (c_parameter
+        type: (c_type
+          (identifier)
+          suffix: (c_pointer_declarator))
+        name: (identifier)))
+    gil_specifier: (identifier)
+    body: (block
+      (pass_statement))))
+
+================================================================================
+extern declaration statement
+================================================================================
+
+extern void omp_set_num_threads(int) nogil
+
+--------------------------------------------------------------------------------
+
+(module
+  (extern_statement
+    declaration: (c_function_declaration
+      return_type: (c_type
+        (identifier))
+      name: (identifier)
+      parameters: (c_parameters
+        (c_parameter
+          type: (c_type
+            (identifier))))
+      nogil: (identifier))))
+
+================================================================================
+Cython utility template placeholders
+================================================================================
+
+cdef extern from *:
+    object {{enum_to_pyint_func}}({{name}} value)
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    body: (block
+      (c_function_declaration
+        return_type: (c_type
+          (identifier))
+        name: (cython_template_placeholder
+          (identifier))
+        parameters: (c_parameters
+          (c_parameter
+            type: (cython_template_placeholder
+              (identifier))
+            name: (identifier)))))))
+
+================================================================================
+inline C code in extern block
+================================================================================
+
+cdef extern from *:
+    """
+    #include <threads.h>
+    """
+    int thrd_success
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_extern_block
+    body: (block
+      (expression_statement
+        (string
+          (string_start)
+          (string_content)
+          (string_end)))
       (c_variable_declaration
         type: (c_type
           (identifier))
@@ -434,31 +940,11 @@ ctypedef struct Point:
           name: (identifier))))))
 
 ================================================================================
-Ctypedef fused
+C alias function declaration
 ================================================================================
 
-ctypedef fused number_t:
-    int
-    float
-    double
-
---------------------------------------------------------------------------------
-
-(module
-  (ctypedef_fused_definition
-    name: (identifier)
-    body: (block
-      (identifier)
-      (identifier)
-      (identifier))))
-
-================================================================================
-Cdef extern block
-================================================================================
-
-cdef extern from "math.h":
-    double sin(double x)
-    double cos(double x)
+cdef extern from "Python.h":
+    object PyContextVar_New_with_default "PyContextVar_New" (const char* name, object default_value)
 
 --------------------------------------------------------------------------------
 
@@ -473,172 +959,58 @@ cdef extern from "math.h":
         return_type: (c_type
           (identifier))
         name: (identifier)
-        parameters: (c_declaration_parameters
-          (c_declaration_parameter
+        cname: (string
+          (string_start)
+          (string_content)
+          (string_end))
+        parameters: (c_parameters
+          (c_parameter
             type: (c_type
-              (identifier))
-            name: (identifier))))
-      (c_function_declaration
-        return_type: (c_type
-          (identifier))
-        name: (identifier)
-        parameters: (c_declaration_parameters
-          (c_declaration_parameter
+              (identifier)
+              suffix: (c_pointer_declarator))
+            name: (identifier))
+          (c_parameter
             type: (c_type
               (identifier))
             name: (identifier)))))))
 
 ================================================================================
-Cdef extern block with nogil
+C alias object declaration
 ================================================================================
 
-cdef extern from "header.h" nogil:
-    void func()
+cdef object __pyx_collections_abc_Sequence "__pyx_collections_abc_Sequence"
 
 --------------------------------------------------------------------------------
 
 (module
-  (cdef_extern_block
-    source: (string
-      (string_start)
-      (string_content)
-      (string_end))
-    body: (block
-      (c_function_declaration
-        return_type: (c_type
-          (identifier))
-        name: (identifier)
-        parameters: (c_declaration_parameters)))))
-
-================================================================================
-Cdef extern from wildcard
-================================================================================
-
-cdef extern from *:
-    ctypedef int size_t
-
---------------------------------------------------------------------------------
-
-(module
-  (cdef_extern_block
-    body: (block
-      (ctypedef_statement
-        type: (c_type
-          (identifier))
-        name: (identifier)))))
-
-================================================================================
-Compile-time DEF
-================================================================================
-
-DEF PI = 3.14159
-DEF N = 100
-
---------------------------------------------------------------------------------
-
-(module
-  (cython_def_statement
-    name: (identifier)
-    value: (float))
-  (cython_def_statement
-    name: (identifier)
-    value: (integer)))
-
-================================================================================
-Compile-time IF/ELIF/ELSE
-================================================================================
-
-IF UNAME_SYSNAME == "Windows":
-    pass
-ELIF UNAME_SYSNAME == "Linux":
-    pass
-ELSE:
-    pass
-
---------------------------------------------------------------------------------
-
-(module
-  (cython_if_statement
-    condition: (comparison_operator
-      (identifier)
-      (string
+  (cdef_statement
+    type: (c_type
+      (identifier))
+    declarator: (c_declarator
+      name: (identifier)
+      cname: (string
         (string_start)
         (string_content)
-        (string_end)))
-    consequence: (block
-      (pass_statement))
-    alternative: (cython_elif_clause
-      condition: (comparison_operator
-        (identifier)
-        (string
-          (string_start)
-          (string_content)
-          (string_end)))
-      consequence: (block
-        (pass_statement)))
-    alternative: (cython_else_clause
-      body: (block
-        (pass_statement)))))
+        (string_end)))))
 
 ================================================================================
-Include statement
+noexcept function pointer typedef
 ================================================================================
 
-include "filename.pxi"
+ctypedef void (*sighandler_t)(int SIGNUM) noexcept nogil
 
 --------------------------------------------------------------------------------
 
 (module
-  (cython_include_statement
-    path: (string
-      (string_start)
-      (string_content)
-      (string_end))))
-
-================================================================================
-Legacy property syntax
-================================================================================
-
-property x:
-    def __get__(self):
-        return 1
-
---------------------------------------------------------------------------------
-
-(module
-  (cython_property_definition
-    name: (identifier)
-    body: (block
-      (function_definition
-        name: (identifier)
-        parameters: (parameters
-          (identifier))
-        body: (block
-          (return_statement
-            (integer)))))))
-
-================================================================================
-Nogil/gil with blocks
-================================================================================
-
-with nogil:
-    pass
-
-with gil:
-    pass
-
---------------------------------------------------------------------------------
-
-(module
-  (with_statement
-    (with_clause
-      (with_item
-        value: (identifier)))
-    body: (block
-      (pass_statement)))
-  (with_statement
-    (with_clause
-      (with_item
-        value: (identifier)))
-    body: (block
-      (pass_statement))))
+  (ctypedef_statement
+    type: (c_function_pointer_type
+      return_type: (c_type
+        (identifier))
+      name: (identifier)
+      parameters: (c_parameters
+        (c_parameter
+          type: (c_type
+            (identifier))
+          name: (identifier)))
+      noexcept: (identifier)
+      nogil: (identifier))))
