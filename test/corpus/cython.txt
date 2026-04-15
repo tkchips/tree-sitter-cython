@@ -473,8 +473,8 @@ cdef extern from "math.h":
         return_type: (c_type
           (identifier))
         name: (identifier)
-        parameters: (c_parameters
-          (c_parameter
+        parameters: (c_declaration_parameters
+          (c_declaration_parameter
             type: (c_type
               (identifier))
             name: (identifier))))
@@ -482,8 +482,8 @@ cdef extern from "math.h":
         return_type: (c_type
           (identifier))
         name: (identifier)
-        parameters: (c_parameters
-          (c_parameter
+        parameters: (c_declaration_parameters
+          (c_declaration_parameter
             type: (c_type
               (identifier))
             name: (identifier)))))))
@@ -508,7 +508,7 @@ cdef extern from "header.h" nogil:
         return_type: (c_type
           (identifier))
         name: (identifier)
-        parameters: (c_parameters)))))
+        parameters: (c_declaration_parameters)))))
 
 ================================================================================
 Cdef extern from wildcard

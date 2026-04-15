@@ -81,19 +81,20 @@ cdef extern from "<vector>" namespace "std":
         body: (block
           (cpp_constructor_declaration
             name: (identifier)
-            parameters: (c_parameters)
+            parameters: (c_declaration_parameters)
             except_clause: (cdef_except_clause))
           (cpp_operator_declaration
             return_type: (c_type
               (identifier)
               suffix: (c_reference_declarator))
-            operator: (cpp_operator))
+            operator: (cpp_operator)
+            parameters: (c_declaration_parameters))
           (cpp_operator_declaration
             return_type: (c_type
               (identifier))
             operator: (cpp_operator)
-            parameters: (c_parameters
-              (c_parameter
+            parameters: (c_declaration_parameters
+              (c_declaration_parameter
                 type: (c_type
                   (identifier))))))))))
 

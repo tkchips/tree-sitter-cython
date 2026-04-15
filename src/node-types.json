@@ -20,6 +20,10 @@
         "named": true
       },
       {
+        "type": "cpp_class_definition",
+        "named": true
+      },
+      {
         "type": "ctypedef_fused_definition",
         "named": true
       },
@@ -838,6 +842,14 @@
         {
           "type": "c_variable_declaration",
           "named": true
+        },
+        {
+          "type": "cpp_constructor_declaration",
+          "named": true
+        },
+        {
+          "type": "cpp_operator_declaration",
+          "named": true
         }
       ]
     }
@@ -886,6 +898,67 @@
     "type": "break_statement",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "c_declaration_parameter",
+    "named": true,
+    "fields": {
+      "default": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "c_type",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "parameter",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "c_declaration_parameters",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "c_declaration_parameter",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "c_declarator",
@@ -942,7 +1015,7 @@
         "required": true,
         "types": [
           {
-            "type": "c_parameters",
+            "type": "c_declaration_parameters",
             "named": true
           }
         ]
@@ -1041,6 +1114,30 @@
     "fields": {}
   },
   {
+    "type": "c_reference_declarator",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "c_template_parameters",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "default_type_parameter",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "c_type",
     "named": true,
     "fields": {
@@ -1054,6 +1151,10 @@
           },
           {
             "type": "c_pointer_declarator",
+            "named": true
+          },
+          {
+            "type": "c_reference_declarator",
             "named": true
           }
         ]
@@ -1302,6 +1403,16 @@
         "types": [
           {
             "type": "block",
+            "named": true
+          }
+        ]
+      },
+      "namespace": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string",
             "named": true
           }
         ]
@@ -1684,6 +1795,149 @@
     "fields": {}
   },
   {
+    "type": "cpp_class_definition",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "block",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "type_parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "c_template_parameters",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "cpp_constructor_declaration",
+    "named": true,
+    "fields": {
+      "except_clause": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "cdef_except_clause",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "c_declaration_parameters",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "cpp_operator",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "c_type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cpp_operator_declaration",
+    "named": true,
+    "fields": {
+      "except_clause": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "cdef_except_clause",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "cpp_operator",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "c_declaration_parameters",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "c_type",
+            "named": true
+          }
+        ]
+      },
+      "type_parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "c_template_parameters",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "ctypedef_fused_definition",
     "named": true,
     "fields": {
@@ -1998,6 +2252,22 @@
         "types": [
           {
             "type": "expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "default_type_parameter",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -4094,6 +4364,10 @@
     }
   },
   {
+    "type": "!",
+    "named": false
+  },
+  {
     "type": "!=",
     "named": false
   },
@@ -4142,6 +4416,10 @@
     "named": false
   },
   {
+    "type": "++",
+    "named": false
+  },
+  {
     "type": "+=",
     "named": false
   },
@@ -4151,6 +4429,10 @@
   },
   {
     "type": "-",
+    "named": false
+  },
+  {
+    "type": "--",
     "named": false
   },
   {
@@ -4351,6 +4633,10 @@
     "named": false
   },
   {
+    "type": "cppclass",
+    "named": false
+  },
+  {
     "type": "ctypedef",
     "named": false
   },
@@ -4468,6 +4754,10 @@
     "named": false
   },
   {
+    "type": "namespace",
+    "named": false
+  },
+  {
     "type": "nogil",
     "named": false
   },
@@ -4481,6 +4771,10 @@
   },
   {
     "type": "not",
+    "named": false
+  },
+  {
+    "type": "operator",
     "named": false
   },
   {

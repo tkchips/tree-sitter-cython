@@ -63,6 +63,7 @@ module.exports = grammar({
     [$.cdef_statement, $.primary_expression],
     [$.cdef_statement, $.cdef_function_definition],
     [$.cdef_statement, $.cdef_class_definition],
+    [$.cdef_statement, $.cpp_class_definition],
     [$.cdef_statement, $.cdef_extern_block],
     [$.c_parameter, $.primary_expression],
     [$.ctypedef_statement, $.primary_expression],
@@ -72,6 +73,7 @@ module.exports = grammar({
     [$.cython_if_statement, $.primary_expression],
     [$.cython_include_statement, $.primary_expression],
     [$.cython_property_definition, $.primary_expression],
+    [$.primary_expression, $.cpp_constructor_declaration],
   ],
 
   supertypes: $ => [
@@ -312,6 +314,7 @@ module.exports = grammar({
       // Cython compound statements
       $.cdef_function_definition,
       $.cdef_class_definition,
+      $.cpp_class_definition,
       $.ctypedef_struct_definition,
       $.ctypedef_fused_definition,
       $.cdef_extern_block,
@@ -1313,12 +1316,15 @@ module.exports = grammar({
         ),
         optional(field('suffix', choice(
           $.c_pointer_declarator,
+          $.c_reference_declarator,
           $.c_memoryview_declarator,
         ))),
       ));
     },
 
     c_pointer_declarator: _ => prec(PREC.c_type, repeat1('*')),
+
+    c_reference_declarator: _ => prec(PREC.c_type, '&'),
 
     c_memoryview_declarator: $ => seq(
       '[',
@@ -1370,8 +1376,19 @@ module.exports = grammar({
       ')',
     ),
 
+    c_declaration_parameters: $ => seq(
+      '(',
+      optional($._c_declaration_parameters_list),
+      ')',
+    ),
+
     _c_parameters_list: $ => seq(
       commaSep1($.c_parameter),
+      optional(','),
+    ),
+
+    _c_declaration_parameters_list: $ => seq(
+      commaSep1($.c_declaration_parameter),
       optional(','),
     ),
 
@@ -1384,9 +1401,23 @@ module.exports = grammar({
       $.parameter,
     ),
 
+    c_declaration_parameter: $ => choice(
+      seq(
+        field('type', $.c_type),
+        field('name', $.identifier),
+        optional(seq('=', field('default', $.expression))),
+      ),
+      seq(
+        field('type', $.c_type),
+        optional(seq('=', field('default', $.expression))),
+      ),
+      $.parameter,
+    ),
+
     cdef_except_clause: $ => seq(
       'except',
       choice(
+        '+',
         '?',
         seq(optional('?'), $.expression),
         '*',
@@ -1397,7 +1428,7 @@ module.exports = grammar({
     c_function_declaration: $ => prec(PREC.cdef, seq(
       field('return_type', $.c_type),
       field('name', $.identifier),
-      field('parameters', $.c_parameters),
+      field('parameters', $.c_declaration_parameters),
       optional('nogil'),
       optional(field('except_clause', $.cdef_except_clause)),
     )),
@@ -1434,6 +1465,82 @@ module.exports = grammar({
       field('body', $._suite),
     ),
 
+    cpp_class_definition: $ => prec(PREC.cdef + 1, seq(
+      'cdef',
+      'cppclass',
+      field('name', $.identifier),
+      optional(field('type_parameters', $.c_template_parameters)),
+      ':',
+      field('body', $._cpp_class_suite),
+    )),
+
+    _cpp_class_suite: $ => choice(
+      seq($._indent, alias($._cpp_class_block, $.block)),
+      alias($._newline, $.block),
+    ),
+
+    _cpp_class_block: $ => seq(
+      repeat(choice(
+        $._statement,
+        $._cython_declaration_statements,
+        $._cpp_class_declaration_statements,
+      )),
+      $._dedent,
+    ),
+
+    _cpp_class_declaration_statements: $ => seq(
+      sep1(choice(
+        $.cpp_constructor_declaration,
+        $.cpp_operator_declaration,
+      ), SEMICOLON),
+      optional(SEMICOLON),
+      $._newline,
+    ),
+
+    cpp_constructor_declaration: $ => seq(
+      field('name', $.identifier),
+      field('parameters', $.c_declaration_parameters),
+      optional(field('except_clause', $.cdef_except_clause)),
+    ),
+
+    cpp_operator_declaration: $ => seq(
+      optional(field('return_type', $.c_type)),
+      field('operator', $.cpp_operator),
+      optional(field('type_parameters', $.c_template_parameters)),
+      field('parameters', $.c_declaration_parameters),
+      optional(field('except_clause', $.cdef_except_clause)),
+    ),
+
+    cpp_operator: $ => seq(
+      'operator',
+      choice(
+        '+', '-', '*', '/', '%', '^', // Arithmetic
+        '&', '|', '~', '!', //Bitwise
+        '=', // Assignmnet
+        '<', '>', '==', '!=', '<=', '>=', // Comparison
+        '<<', '>>', // Shift        
+        '++', '--', // Increment
+        ',', seq('(', ')'), seq('[', ']'), // Access
+        $.c_type,
+      ),
+    ),
+
+    c_template_parameters: $ => seq(
+      '[',
+      commaSep1(choice(
+        $.identifier,
+        $.default_type_parameter,
+      )),
+      optional(','),
+      ']',
+    ),
+
+    default_type_parameter: $ => seq(
+      field('name', $.identifier),
+      '=',
+      '*',
+    ),
+
     // --- Phase 5: ctypedef ---
 
     ctypedef_statement: $ => seq(
@@ -1463,13 +1570,17 @@ module.exports = grammar({
     ),
 
     // --- Phase 6: cdef extern blocks ---
-
+    // e.g. cdef extern from "<vector>" namespace "std" nogil:
     cdef_extern_block: $ => prec(PREC.cdef + 1, seq(
       'cdef',
       'extern',
       optional(seq(
         'from',
         field('source', choice($.string, '*')),
+      )),
+      optional(seq(
+        'namespace',
+        field('namespace', $.string),
       )),
       optional('nogil'),
       ':',
