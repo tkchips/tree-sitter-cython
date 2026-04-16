@@ -170,6 +170,7 @@ module.exports = grammar({
       // Cython simple statements
       $.cimport_statement,
       $.cimport_from_statement,
+      $.cdef_attribute_declaration,
       $.cdef_statement,
       $.ctypedef_statement,
       $.cython_def_statement,
@@ -1362,6 +1363,15 @@ module.exports = grammar({
       optional(choice('readonly', 'public')),
       field('type', $.c_type),
       commaSep1(field('declarator', $.c_declarator)),
+    )),
+
+    cdef_attribute_declaration: $ => prec(PREC.cdef + 1, seq(
+      'cdef',
+      field('visibility', choice(
+        alias('public', $.identifier),
+        alias('readonly', $.identifier),
+      )),
+      field('name', $.identifier),
     )),
 
     // bare typed declarations inside extern/struct blocks: `int x`
