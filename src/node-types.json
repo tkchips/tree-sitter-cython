@@ -4,7 +4,19 @@
     "named": true,
     "subtypes": [
       {
+        "type": "c_struct_definition",
+        "named": true
+      },
+      {
+        "type": "cdef_block",
+        "named": true
+      },
+      {
         "type": "cdef_class_definition",
+        "named": true
+      },
+      {
+        "type": "cdef_enum_definition",
         "named": true
       },
       {
@@ -16,6 +28,14 @@
         "named": true
       },
       {
+        "type": "cdef_struct_definition",
+        "named": true
+      },
+      {
+        "type": "cdef_union_definition",
+        "named": true
+      },
+      {
         "type": "class_definition",
         "named": true
       },
@@ -24,7 +44,15 @@
         "named": true
       },
       {
+        "type": "ctypedef_enum_definition",
+        "named": true
+      },
+      {
         "type": "ctypedef_fused_definition",
+        "named": true
+      },
+      {
+        "type": "ctypedef_struct_declaration",
         "named": true
       },
       {
@@ -86,6 +114,10 @@
         "named": true
       },
       {
+        "type": "cdef_attribute_declaration",
+        "named": true
+      },
+      {
         "type": "cdef_statement",
         "named": true
       },
@@ -103,10 +135,6 @@
       },
       {
         "type": "ctypedef_statement",
-        "named": true
-      },
-      {
-        "type": "ctypedef_struct_declaration",
         "named": true
       },
       {
@@ -840,6 +868,10 @@
           "named": true
         },
         {
+          "type": "c_enum_member",
+          "named": true
+        },
+        {
           "type": "c_function_declaration",
           "named": true
         },
@@ -904,6 +936,22 @@
     "fields": {}
   },
   {
+    "type": "c_array_declarator",
+    "named": true,
+    "fields": {
+      "size": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "c_declaration_parameter",
     "named": true,
     "fields": {
@@ -931,6 +979,10 @@
         "multiple": false,
         "required": false,
         "types": [
+          {
+            "type": "c_function_pointer_type",
+            "named": true
+          },
           {
             "type": "c_type",
             "named": true
@@ -960,12 +1012,52 @@
         {
           "type": "c_declaration_parameter",
           "named": true
+        },
+        {
+          "type": "c_variadic_parameter",
+          "named": true
         }
       ]
     }
   },
   {
     "type": "c_declarator",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "suffix": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "c_array_declarator",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "c_enum_member",
     "named": true,
     "fields": {
       "name": {
@@ -1021,10 +1113,6 @@
           {
             "type": "c_declaration_parameters",
             "named": true
-          },
-          {
-            "type": "c_parameters",
-            "named": true
           }
         ]
       },
@@ -1044,6 +1132,62 @@
         "types": [
           {
             "type": "c_template_parameters",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "c_function_pointer_type",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "noexcept": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "nogil": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "c_parameters",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "c_type",
             "named": true
           }
         ]
@@ -1094,6 +1238,10 @@
         "required": false,
         "types": [
           {
+            "type": "c_function_pointer_type",
+            "named": true
+          },
+          {
             "type": "c_type",
             "named": true
           }
@@ -1122,6 +1270,10 @@
         {
           "type": "c_parameter",
           "named": true
+        },
+        {
+          "type": "c_variadic_parameter",
+          "named": true
         }
       ]
     }
@@ -1135,6 +1287,42 @@
     "type": "c_reference_declarator",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "c_struct_definition",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "block",
+            "named": true
+          }
+        ]
+      },
+      "kind": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "c_template_parameters",
@@ -1183,6 +1371,10 @@
       "required": true,
       "types": [
         {
+          "type": "dotted_name",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         }
@@ -1214,6 +1406,11 @@
         ]
       }
     }
+  },
+  {
+    "type": "c_variadic_parameter",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "call",
@@ -1361,6 +1558,48 @@
     }
   },
   {
+    "type": "cdef_attribute_declaration",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "visibility": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "cdef_block",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "block",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "cdef_class_definition",
     "named": true,
     "fields": {
@@ -1390,6 +1629,32 @@
         "types": [
           {
             "type": "argument_list",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "cdef_enum_definition",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "block",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -1527,6 +1792,78 @@
         "types": [
           {
             "type": "c_type",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "cdef_struct_definition",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "block",
+            "named": true
+          }
+        ]
+      },
+      "kind": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "cdef_union_definition",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "block",
+            "named": true
+          }
+        ]
+      },
+      "kind": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -1956,6 +2293,42 @@
     }
   },
   {
+    "type": "ctypedef_enum_definition",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "block",
+            "named": true
+          }
+        ]
+      },
+      "kind": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "ctypedef_fused_definition",
     "named": true,
     "fields": {
@@ -1987,7 +2360,7 @@
     "fields": {
       "name": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "identifier",
@@ -2000,6 +2373,10 @@
         "required": true,
         "types": [
           {
+            "type": "c_function_pointer_type",
+            "named": true
+          },
+          {
             "type": "c_type",
             "named": true
           }
@@ -2011,6 +2388,16 @@
     "type": "ctypedef_struct_declaration",
     "named": true,
     "fields": {
+      "cname": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
       "kind": {
         "multiple": false,
         "required": true,
@@ -2574,6 +2961,11 @@
         ]
       }
     }
+  },
+  {
+    "type": "ellipsis",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "else_clause",
@@ -4502,6 +4894,10 @@
     "named": false
   },
   {
+    "type": "...",
+    "named": false
+  },
+  {
     "type": "/",
     "named": false
   },
@@ -4679,6 +5075,10 @@
     "extra": true
   },
   {
+    "type": "const",
+    "named": false
+  },
+  {
     "type": "continue",
     "named": false
   },
@@ -4707,11 +5107,11 @@
     "named": false
   },
   {
-    "type": "ellipsis",
-    "named": true
+    "type": "else",
+    "named": false
   },
   {
-    "type": "else",
+    "type": "enum",
     "named": false
   },
   {
