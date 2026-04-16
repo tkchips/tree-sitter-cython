@@ -374,8 +374,8 @@ cdef extern from "math.h":
         return_type: (c_type
           (identifier))
         name: (identifier)
-        parameters: (c_parameters
-          (c_parameter
+        parameters: (c_declaration_parameters
+          (c_declaration_parameter
             type: (c_type
               (identifier)))))
       (c_function_declaration
@@ -383,12 +383,12 @@ cdef extern from "math.h":
           (identifier)
           suffix: (c_pointer_declarator))
         name: (identifier)
-        parameters: (c_parameters
-          (c_parameter
+        parameters: (c_declaration_parameters
+          (c_declaration_parameter
             type: (c_type
               (identifier)
               suffix: (c_pointer_declarator)))
-          (c_parameter
+          (c_declaration_parameter
             type: (c_type
               (identifier))))))))
 
@@ -412,12 +412,12 @@ cdef extern from "Python.h":
         return_type: (c_type
           (identifier))
         name: (identifier)
-        parameters: (c_parameters
-          (c_parameter
+        parameters: (c_declaration_parameters
+          (c_declaration_parameter
             type: (c_type
               (identifier))
             name: (identifier))
-          (c_parameter
+          (c_declaration_parameter
             type: (c_type
               (identifier)
               suffix: (c_pointer_declarator))
@@ -449,7 +449,8 @@ ctypedef void (*xmlGenericErrorFunc)(void* ctxt, char* msg, ...) nogil
             (identifier)
             suffix: (c_pointer_declarator))
           name: (identifier))
-        (c_variadic_parameter)))))
+        (c_variadic_parameter))
+      nogil: (identifier))))
 
 ================================================================================
 function pointer parameter
@@ -471,8 +472,8 @@ cdef extern from "<stdlib.h>":
         return_type: (c_type
           (identifier))
         name: (identifier)
-        parameters: (c_parameters
-          (c_parameter
+        parameters: (c_declaration_parameters
+          (c_declaration_parameter
             type: (c_function_pointer_type
               return_type: (c_type
                 (identifier))

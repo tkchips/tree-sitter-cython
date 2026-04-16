@@ -1312,7 +1312,7 @@ module.exports = grammar({
       );
 
       return prec.right(PREC.c_type, seq(
-        optional(keyword('const')),
+        optional('const'),
         choice(
           seq(choice(keyword('unsigned'), keyword('signed')), choice(integer_type, $.identifier)),
           numeric_type,
@@ -1435,12 +1435,12 @@ module.exports = grammar({
     ),
 
     _c_parameters_list: $ => seq(
-      commaSep1($.c_parameter),
+      commaSep1(choice($.c_parameter, $.c_variadic_parameter)),
       optional(','),
     ),
 
     _c_declaration_parameters_list: $ => seq(
-      commaSep1($.c_declaration_parameter),
+      commaSep1(choice($.c_declaration_parameter, $.c_variadic_parameter)),
       optional(','),
     ),
 
@@ -1465,6 +1465,8 @@ module.exports = grammar({
       ),
       $.parameter,
     ),
+
+    c_variadic_parameter: _ => '...',
 
     cdef_except_clause: $ => seq(
       'except',
