@@ -125,16 +125,16 @@ cdef extern from "<algorithm>" namespace "std":
         type_parameters: (c_template_parameters
           (identifier)
           (identifier))
-        parameters: (c_parameters
-          (c_parameter
+        parameters: (c_declaration_parameters
+          (c_declaration_parameter
             type: (c_type
               (identifier))
             name: (identifier))
-          (c_parameter
+          (c_declaration_parameter
             type: (c_type
               (identifier))
             name: (identifier))
-          (c_parameter
+          (c_declaration_parameter
             type: (c_type
               (identifier))
             name: (identifier)))))))

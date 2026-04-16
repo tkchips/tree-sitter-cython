@@ -315,8 +315,14 @@ module.exports = grammar({
       $.cdef_function_definition,
       $.cdef_class_definition,
       $.cpp_class_definition,
+      $.ctypedef_struct_declaration,
       $.ctypedef_struct_definition,
+      $.ctypedef_enum_definition,
       $.ctypedef_fused_definition,
+      $.cdef_struct_definition,
+      $.cdef_union_definition,
+      $.c_struct_definition,
+      $.cdef_enum_definition,
       $.cdef_extern_block,
       $.cython_if_statement,
       $.cython_property_definition,
@@ -1355,6 +1361,52 @@ module.exports = grammar({
       commaSep1(field('declarator', $.c_declarator)),
     )),
 
+    cdef_struct_definition: $ => prec(PREC.cdef + 1, seq(
+      'cdef',
+      field('kind', alias('struct', $.identifier)),
+      field('name', $.identifier),
+      ':',
+      field('body', $._cython_extern_suite),
+    )),
+
+    cdef_union_definition: $ => prec(PREC.cdef + 1, seq(
+      'cdef',
+      field('kind', alias('union', $.identifier)),
+      field('name', $.identifier),
+      ':',
+      field('body', $._cython_extern_suite),
+    )),
+
+    c_struct_definition: $ => prec(PREC.cdef + 1, seq(
+      field('kind', alias('struct', $.identifier)),
+      field('name', $.identifier),
+      ':',
+      field('body', $._cython_extern_suite),
+    )),
+
+    cdef_enum_definition: $ => prec(PREC.cdef + 1, seq(
+      'cdef',
+      'enum',
+      optional(field('name', $.identifier)),
+      ':',
+      field('body', $._c_enum_suite),
+    )),
+
+    c_enum_member: $ => seq(
+      field('name', $.identifier),
+      optional(seq('=', field('value', $.expression))),
+    ),
+
+    _c_enum_suite: $ => choice(
+      seq($._indent, alias($._c_enum_block, $.block)),
+      alias($._newline, $.block),
+    ),
+
+    _c_enum_block: $ => seq(
+      repeat(seq($.c_enum_member, $._newline)),
+      $._dedent,
+    ),
+
     // --- Phase 3: cdef/cpdef function definitions ---
 
     cdef_function_definition: $ => prec(PREC.cdef + 1, seq(
@@ -1425,22 +1477,13 @@ module.exports = grammar({
     ),
 
     // bare function declarations inside extern blocks: `T sin[T](T x)`
-    c_function_declaration: $ => prec(PREC.cdef, choice(
-      seq(
-        field('return_type', $.c_type),
-        field('name', $.identifier),
-        field('type_parameters', $.c_template_parameters),
-        field('parameters', $.c_parameters),
-        optional('nogil'),
-        optional(field('except_clause', $.cdef_except_clause)),
-      ),
-      seq(
-        field('return_type', $.c_type),
-        field('name', $.identifier),
-        field('parameters', $.c_declaration_parameters),
-        optional('nogil'),
-        optional(field('except_clause', $.cdef_except_clause)),
-      ),
+    c_function_declaration: $ => prec(PREC.cdef, seq(
+      field('return_type', $.c_type),
+      field('name', $.identifier),
+      optional(field('type_parameters', $.c_template_parameters)),
+      field('parameters', $.c_declaration_parameters),
+      optional('nogil'),
+      optional(field('except_clause', $.cdef_except_clause)),
     )),
 
     // Custom suite for cdef extern blocks and ctypedef struct/union/enum bodies
@@ -1559,17 +1602,36 @@ module.exports = grammar({
       field('name', $.identifier),
     ),
 
+    ctypedef_struct_declaration: $ => prec(PREC.cdef, seq(
+      'ctypedef',
+      $._ctypedef_struct_head,
+      optional(field('cname', $.string)),
+    )),
+
     ctypedef_struct_definition: $ => prec(PREC.cdef + 1, seq(
       'ctypedef',
+      $._ctypedef_struct_head,
+      optional(field('cname', $.string)),
+      ':',
+      field('body', $._cython_extern_suite),
+    )),
+
+    ctypedef_enum_definition: $ => prec(PREC.cdef + 2, seq(
+      'ctypedef',
+      field('kind', alias('enum', $.identifier)),
+      field('name', $.identifier),
+      ':',
+      field('body', $._c_enum_suite),
+    )),
+
+    _ctypedef_struct_head: $ => seq(
       field('kind', choice(
         alias('struct', $.identifier),
         alias('union', $.identifier),
         alias('enum', $.identifier),
       )),
       field('name', $.identifier),
-      ':',
-      field('body', $._cython_extern_suite),
-    )),
+    ),
 
     ctypedef_fused_definition: $ => seq(
       'ctypedef',
