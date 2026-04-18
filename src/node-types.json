@@ -352,6 +352,10 @@
         "named": true
       },
       {
+        "type": "c_cast_expression",
+        "named": true
+      },
+      {
         "type": "call",
         "named": true
       },
@@ -880,6 +884,10 @@
           "named": true
         },
         {
+          "type": "c_variable_declaration_without_function_pointer",
+          "named": true
+        },
+        {
           "type": "cpp_constructor_declaration",
           "named": true
         },
@@ -945,6 +953,32 @@
         "types": [
           {
             "type": "integer",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "c_cast_expression",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "c_type",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "primary_expression",
             "named": true
           }
         ]
@@ -1024,9 +1058,19 @@
     "type": "c_declarator",
     "named": true,
     "fields": {
+      "function_pointer": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "c_function_pointer_declarator",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "identifier",
@@ -1034,8 +1078,18 @@
           }
         ]
       },
-      "suffix": {
+      "prefix": {
         "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "c_pointer_declarator",
+            "named": true
+          }
+        ]
+      },
+      "suffix": {
+        "multiple": true,
         "required": false,
         "types": [
           {
@@ -1106,6 +1160,26 @@
           }
         ]
       },
+      "noexcept": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "c_noexcept_clause",
+            "named": true
+          }
+        ]
+      },
+      "nogil": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
       "parameters": {
         "multiple": false,
         "required": true,
@@ -1139,9 +1213,45 @@
     }
   },
   {
+    "type": "c_function_pointer_declarator",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "c_declaration_parameters",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "c_function_pointer_type",
     "named": true,
     "fields": {
+      "except_clause": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "cdef_except_clause",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -1157,7 +1267,7 @@
         "required": false,
         "types": [
           {
-            "type": "identifier",
+            "type": "c_noexcept_clause",
             "named": true
           }
         ]
@@ -1204,6 +1314,21 @@
       "types": [
         {
           "type": "expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "c_noexcept_clause",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
           "named": true
         }
       ]
@@ -1344,13 +1469,32 @@
     }
   },
   {
+    "type": "c_tuple_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "c_type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "c_type",
     "named": true,
     "fields": {
       "suffix": {
-        "multiple": false,
+        "multiple": true,
         "required": false,
         "types": [
+          {
+            "type": "c_array_declarator",
+            "named": true
+          },
           {
             "type": "c_memoryview_declarator",
             "named": true
@@ -1371,11 +1515,19 @@
       "required": true,
       "types": [
         {
+          "type": "c_tuple_type",
+          "named": true
+        },
+        {
           "type": "dotted_name",
           "named": true
         },
         {
           "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "parenthesized_c_type",
           "named": true
         }
       ]
@@ -1401,6 +1553,88 @@
         "types": [
           {
             "type": "c_type",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "c_variable_declaration_without_function_pointer",
+    "named": true,
+    "fields": {
+      "declarator": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "=",
+            "named": false
+          },
+          {
+            "type": "c_array_declarator",
+            "named": true
+          },
+          {
+            "type": "c_pointer_declarator",
+            "named": true
+          },
+          {
+            "type": "expression",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "prefix": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "c_pointer_declarator",
+            "named": true
+          }
+        ]
+      },
+      "suffix": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "c_array_declarator",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "c_type",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "expression",
             "named": true
           }
         ]
@@ -1750,6 +1984,26 @@
           }
         ]
       },
+      "noexcept": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "c_noexcept_clause",
+            "named": true
+          }
+        ]
+      },
+      "nogil": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
       "parameters": {
         "multiple": false,
         "required": true,
@@ -1815,6 +2069,16 @@
       "kind": {
         "multiple": false,
         "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "modifier": {
+        "multiple": false,
+        "required": false,
         "types": [
           {
             "type": "identifier",
@@ -2209,6 +2473,26 @@
           }
         ]
       },
+      "noexcept": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "c_noexcept_clause",
+            "named": true
+          }
+        ]
+      },
+      "nogil": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
       "parameters": {
         "multiple": false,
         "required": true,
@@ -2246,6 +2530,26 @@
         "types": [
           {
             "type": "cdef_except_clause",
+            "named": true
+          }
+        ]
+      },
+      "noexcept": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "c_noexcept_clause",
+            "named": true
+          }
+        ]
+      },
+      "nogil": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -3983,6 +4287,21 @@
       "types": [
         {
           "type": "parameter",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "parenthesized_c_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "c_type",
           "named": true
         }
       ]

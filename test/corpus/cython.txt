@@ -485,6 +485,7 @@ C array declarators
 ================================================================================
 
 cdef int values[3]
+cdef float[42] g
 cdef PyObject* objects[3]
 
 --------------------------------------------------------------------------------
@@ -497,6 +498,13 @@ cdef PyObject* objects[3]
       name: (identifier)
       suffix: (c_array_declarator
         size: (integer))))
+  (cdef_statement
+    type: (c_type
+      (identifier)
+      suffix: (c_array_declarator
+        size: (integer)))
+    declarator: (c_declarator
+      name: (identifier)))
   (cdef_statement
     type: (c_type
       (identifier)
@@ -578,3 +586,5 @@ cdef class Scanner:
       (cdef_attribute_declaration
         visibility: (identifier)
         name: (identifier)))))
+
+

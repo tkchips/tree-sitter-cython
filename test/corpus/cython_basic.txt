@@ -277,6 +277,7 @@ cdef int func() nogil:
       (identifier))
     name: (identifier)
     parameters: (c_parameters)
+    nogil: (identifier)
     body: (block
       (pass_statement))))
 
