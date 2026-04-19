@@ -1,5 +1,5 @@
 
-# Test
+# Variable definitions
 
 # ==============================================================
 # C global variable 
