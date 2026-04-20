@@ -57,23 +57,6 @@ module.exports = grammar({
     [$.print_statement, $.primary_expression],
     [$.type_alias_statement, $.primary_expression],
     [$.match_statement, $.primary_expression],
-    // Cython conflicts
-    [$.cimport_statement, $.primary_expression],
-    [$.cimport_from_statement, $.import_from_statement],
-    [$.cdef_statement, $.primary_expression],
-    [$.cdef_statement, $.cdef_function_definition],
-    [$.cdef_statement, $.cdef_class_definition],
-    [$.cdef_statement, $.cpp_class_definition],
-    [$.cdef_statement, $.cdef_extern_block],
-    [$.c_parameter, $.primary_expression],
-    [$.ctypedef_statement, $.primary_expression],
-    [$.ctypedef_statement, $.ctypedef_struct_definition],
-    [$.ctypedef_statement, $.ctypedef_fused_definition],
-    [$.cython_def_statement, $.primary_expression],
-    [$.cython_if_statement, $.primary_expression],
-    [$.cython_include_statement, $.primary_expression],
-    [$.cython_property_definition, $.primary_expression],
-    [$.primary_expression, $.cpp_constructor_declaration],
   ],
 
   supertypes: $ => [

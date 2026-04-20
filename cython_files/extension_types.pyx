@@ -171,7 +171,7 @@ myfunc[int](fused_type)
 (<object (*)(float, int)> myfunc)(f, i)
 
 # ==============================================================
-Type Checking Specializations
+# Type Checking Specializations
 # ==============================================================
 
 cdef cython.integral myfunc(cython.integral i, bunch_of_types s):
@@ -188,7 +188,7 @@ cdef cython.integral myfunc(cython.integral i, bunch_of_types s):
     return i * 2
 
 # ==============================================================
-Conditional GIL Acquiring / Releasing
+# Conditional GIL Acquiring / Releasing
 # ==============================================================
 
 ctypedef fused double_or_object:
