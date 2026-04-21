@@ -667,6 +667,11 @@ module.exports = grammar({
     ),
 
     parameter: $ => choice(
+      alias($._def_c_parameter, $.c_parameter),
+      $._python_parameter,
+    ),
+
+    _python_parameter: $ => choice(
       $.identifier,
       $.typed_parameter,
       $.default_parameter,
@@ -676,6 +681,18 @@ module.exports = grammar({
       $.keyword_separator,
       $.positional_separator,
       $.dictionary_splat_pattern,
+    ),
+
+    _def_c_type: $ => buildCType($, {
+      allowGroupedTypes: false,
+      aliasAsCType: true,
+    }),
+
+    _def_c_parameter: $ => seq(
+      field('type', $._def_c_type),
+      field('name', $.identifier),
+      optional(seq('not', field('not_none', $.none))),
+      optional(seq('=', field('default', $.expression))),
     ),
 
     pattern: $ => choice(
@@ -832,6 +849,7 @@ module.exports = grammar({
     c_cast_expression: $ => prec(PREC.unary, seq(
       '<',
       field('type', $.c_type),
+      optional(field('optional', alias('?', $.identifier))),
       '>',
       field('value', $.primary_expression),
     )),
@@ -1287,49 +1305,7 @@ module.exports = grammar({
 
     // --- Phase 2: C type system and cdef variable declarations ---
 
-    c_type: $ => {
-      const keyword = value => alias(value, $.identifier);
-      const complex_keyword = alias(token(prec(1, 'complex')), $.identifier);
-      const integer_type = choice(
-        keyword('char'),
-        keyword('short'),
-        seq(keyword('short'), keyword('int')),
-        keyword('int'),
-        keyword('long'),
-        seq(keyword('long'), keyword('int')),
-        seq(keyword('long'), keyword('long')),
-        seq(keyword('long'), keyword('long'), keyword('int')),
-      );
-      const numeric_type = choice(
-        integer_type,
-        seq(keyword('float'), complex_keyword),
-        seq(keyword('double'), complex_keyword),
-        seq(keyword('long'), keyword('double'), complex_keyword),
-        keyword('float'),
-        keyword('double'),
-        seq(keyword('long'), keyword('double')),
-      );
-
-      return prec.right(PREC.c_type, seq(
-        optional('const'),
-        choice(
-          seq(choice(keyword('unsigned'), keyword('signed')), choice(integer_type, $.identifier)),
-          numeric_type,
-          keyword('void'),
-          keyword('bint'),
-          $.c_tuple_type,
-          $.parenthesized_c_type,
-          $.dotted_name,
-          $.identifier,
-        ),
-        optional(field('suffix', choice(
-          $.c_pointer_declarator,
-          $.c_reference_declarator,
-          $.c_memoryview_declarator,
-          repeat1($.c_array_declarator),
-        ))),
-      ));
-    },
+    c_type: $ => buildCType($),
 
     c_tuple_type: $ => seq(
       '(',
@@ -1521,7 +1497,7 @@ module.exports = grammar({
         field('type', $.c_function_pointer_type),
         optional(seq('=', field('default', $.expression))),
       ),
-      $.parameter,
+      $._python_parameter,
     ),
 
     c_declaration_parameter: $ => choice(
@@ -1538,7 +1514,7 @@ module.exports = grammar({
         field('type', $.c_type),
         optional(seq('=', field('default', $.expression))),
       ),
-      $.parameter,
+      $._python_parameter,
     ),
 
     c_variadic_parameter: _ => '...',
@@ -1559,6 +1535,11 @@ module.exports = grammar({
       seq(
         field('noexcept', $.c_noexcept_clause),
         optional(field('nogil', alias('nogil', $.identifier))),
+        optional(field('except_clause', $.cdef_except_clause)),
+      ),
+      seq(
+        'with',
+        field('gil', alias('gil', $.identifier)),
         optional(field('except_clause', $.cdef_except_clause)),
       ),
       seq(
@@ -1665,10 +1646,10 @@ module.exports = grammar({
       'operator',
       choice(
         '+', '-', '*', '/', '%', '^', // Arithmetic
-        '&', '|', '~', '!', //Bitwise
+        '&', '|', '~', '!', // Bitwise
         '=', // Assignmnet
         '<', '>', '==', '!=', '<=', '>=', // Comparison
-        '<<', '>>', // Shift        
+        '<<', '>>', // Shift
         '++', '--', // Increment
         ',', seq('(', ')'), seq('[', ']'), // Access
         $.c_type,
@@ -1840,4 +1821,69 @@ function commaSep1(rule) {
  */
 function sep1(rule, separator) {
   return seq(rule, repeat(seq(separator, rule)));
+}
+
+/**
+ * Creates a C type rule, with minor context-dependent switches.
+ *
+ * @param {GrammarSymbols<string>} $
+ * @param {{
+ *   allowGroupedTypes?: boolean,
+ *   aliasAsCType?: boolean,
+ * }} [options]
+ *
+ * @returns {Rule}
+ */
+function buildCType($, options = {}) {
+  const {
+    allowGroupedTypes = true,
+    aliasAsCType = false,
+  } = options;
+
+  const keyword = value => alias(value, $.identifier);
+  const complex_keyword = alias(token(prec(1, 'complex')), $.identifier);
+  const integer_type = choice(
+    keyword('char'),
+    keyword('short'),
+    seq(keyword('short'), keyword('int')),
+    keyword('int'),
+    keyword('long'),
+    seq(keyword('long'), keyword('int')),
+    seq(keyword('long'), keyword('long')),
+    seq(keyword('long'), keyword('long'), keyword('int')),
+  );
+  const numeric_type = choice(
+    integer_type,
+    seq(keyword('float'), complex_keyword),
+    seq(keyword('double'), complex_keyword),
+    seq(keyword('long'), keyword('double'), complex_keyword),
+    keyword('float'),
+    keyword('double'),
+    seq(keyword('long'), keyword('double')),
+  );
+
+  const core_type = prec.right(PREC.c_type, seq(
+    optional('const'),
+    choice(
+      seq(choice(keyword('unsigned'), keyword('signed')), choice(integer_type, $.identifier)),
+      numeric_type,
+      keyword('void'),
+      keyword('bint'),
+      ...(allowGroupedTypes ? [$.c_tuple_type, $.parenthesized_c_type] : []),
+      $.dotted_name,
+      $.identifier,
+    ),
+    optional(field('suffix', choice(
+      $.c_pointer_declarator,
+      $.c_reference_declarator,
+      $.c_memoryview_declarator,
+      repeat1($.c_array_declarator),
+    ))),
+  ));
+
+  if (aliasAsCType) {
+    return alias(core_type, $.c_type);
+  }
+
+  return core_type;
 }

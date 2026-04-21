@@ -1,0 +1,296 @@
+================================================================================
+buildCType c_type grouped variants
+================================================================================
+
+cdef (double, int) pair
+cdef void consume((long, long, double) t):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_statement
+    (c_type
+      (c_tuple_type
+        (c_type
+          (identifier))
+        (c_type
+          (identifier))))
+    (c_declarator
+      (identifier)))
+  (cdef_function_definition
+    (c_type
+      (identifier))
+    (identifier)
+    (c_parameters
+      (c_parameter
+        (c_type
+          (c_tuple_type
+            (c_type
+              (identifier))
+            (c_type
+              (identifier))
+            (c_type
+              (identifier))))
+        (identifier)))
+    (block
+      (pass_statement))))
+
+================================================================================
+buildCType c_type suffix and dotted name
+================================================================================
+
+cdef int[:] view
+cdef foo.bar.Baz value
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_statement
+    (c_type
+      (identifier)
+      (c_memoryview_declarator))
+    (c_declarator
+      (identifier)))
+  (cdef_statement
+    (c_type
+      (dotted_name
+        (identifier)
+        (identifier)
+        (identifier)))
+    (c_declarator
+      (identifier))))
+
+================================================================================
+buildCType def c-style parameters
+================================================================================
+
+def __init__(self, int number_of_legs, unsigned int flags, const int* raw):
+    pass
+
+def wrap(self, package.module.Type thing):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters
+      (identifier)
+      (c_parameter
+        (identifier)
+        (identifier))
+      (c_parameter
+        (identifier)
+        (identifier)
+        (identifier))
+      (c_parameter
+        (c_type)
+        (identifier)
+        (c_type)
+        (identifier)))
+    (block
+      (pass_statement)))
+  (function_definition
+    (identifier)
+    (parameters
+      (identifier)
+      (c_parameter
+        (c_type
+          (identifier)
+          (identifier)
+          (identifier))
+        (identifier)))
+    (block
+      (pass_statement))))
+
+================================================================================
+buildCType c_type keyword combinations
+================================================================================
+
+cdef signed char sc
+cdef unsigned long long ull
+cdef long double ld
+cdef bint ok
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_statement
+    (c_type
+      (identifier)
+      (identifier))
+    (c_declarator
+      (identifier)))
+  (cdef_statement
+    (c_type
+      (identifier)
+      (identifier)
+      (identifier))
+    (c_declarator
+      (identifier)))
+  (cdef_statement
+    (c_type
+      (identifier)
+      (identifier))
+    (c_declarator
+      (identifier)))
+  (cdef_statement
+    (c_type
+      (identifier))
+    (c_declarator
+      (identifier))))
+
+================================================================================
+buildCType c_type const and indexed suffixes
+================================================================================
+
+cdef const int* ptr
+cdef int[10] arr
+cdef int[2][4] matrix
+cdef double[:, ::1] mv
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_statement
+    (c_type
+      (identifier)
+      (c_pointer_declarator))
+    (c_declarator
+      (identifier)))
+  (cdef_statement
+    (c_type
+      (identifier)
+      (c_array_declarator
+        (integer)))
+    (c_declarator
+      (identifier)))
+  (cdef_statement
+    (c_type
+      (identifier)
+      (c_array_declarator
+        (integer))
+      (c_array_declarator
+        (integer)))
+    (c_declarator
+      (identifier)))
+  (cdef_statement
+    (c_type
+      (identifier)
+      (c_memoryview_declarator
+        (integer)))
+    (c_declarator
+      (identifier))))
+
+================================================================================
+buildCType c_type parenthesized scalar
+================================================================================
+
+cdef (unsigned long) wrapped
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_statement
+    (c_type
+      (parenthesized_c_type
+        (c_type
+          (identifier)
+          (identifier))))
+    (c_declarator
+      (identifier))))
+
+================================================================================
+buildCType def c-style defaults and not none
+================================================================================
+
+def normalize(self, unsigned int flags=0, const int* raw=NULL):
+    pass
+
+def widen(self, package.module.Type obj not None):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters
+      (identifier)
+      (c_parameter
+        (identifier)
+        (identifier)
+        (identifier)
+        (integer))
+      (c_parameter
+        (c_type)
+        (identifier)
+        (c_type)
+        (identifier)
+        (identifier)))
+    (block
+      (pass_statement)))
+  (function_definition
+    (identifier)
+    (parameters
+      (identifier)
+      (c_parameter
+        (c_type
+          (identifier)
+          (identifier)
+          (identifier))
+        (identifier)
+        (none)))
+    (block
+      (pass_statement))))
+
+================================================================================
+buildCType def c-style suffix parameters
+================================================================================
+
+def map_view(self, int[:] view, int[4] buf):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters
+      (identifier)
+      (c_parameter
+        (identifier)
+        (c_type)
+        (identifier))
+      (c_parameter
+        (identifier)
+        (c_type
+          (c_array_declarator
+            (integer)))
+        (identifier)))
+    (block
+      (pass_statement))))
+
+================================================================================
+buildCType def parameter rejects grouped c type
+================================================================================
+
+def bad(self, (int, double) t):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters
+      (identifier)
+      (tuple_pattern
+        (identifier)
+        (identifier))
+      (ERROR
+        (identifier)))
+    (block
+      (pass_statement))))

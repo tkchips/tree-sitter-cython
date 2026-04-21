@@ -103,8 +103,7 @@ dog.has_tail = True
         parameters: (parameters
           (identifier)
           (c_parameter
-            type: (c_type
-              (identifier))
+            type: (identifier)
             name: (identifier)))
         body: (block
           (assignment
@@ -209,8 +208,7 @@ def widen_shrubbery(Shrubbery sh not None, extra_width):
     name: (identifier)
     parameters: (parameters
       (c_parameter
-        type: (c_type
-          (identifier))
+        type: (c_type)
         name: (identifier)
         not_none: (none))
       (identifier))
@@ -713,8 +711,7 @@ def increment(double_or_object x):
     name: (identifier)
     parameters: (parameters
       (c_parameter
-        type: (c_type
-          (identifier))
+        type: (c_type)
         name: (identifier)))
     body: (block
       (with_statement
