@@ -848,7 +848,7 @@ module.exports = grammar({
 
     c_cast_expression: $ => prec(PREC.unary, seq(
       '<',
-      field('type', $.c_type),
+      field('type', choice($.c_function_pointer_type, $.c_type)),
       optional(field('optional', alias('?', $.identifier))),
       '>',
       field('value', $.primary_expression),
@@ -1487,6 +1487,20 @@ module.exports = grammar({
       optional(','),
     ),
 
+    _c_function_pointer_parameters_list: $ => seq(
+      commaSep1(choice(
+        alias($.c_declaration_parameter, $.c_parameter),
+        $.c_variadic_parameter,
+      )),
+      optional(','),
+    ),
+
+    c_function_pointer_parameters: $ => seq(
+      '(',
+      optional($._c_function_pointer_parameters_list),
+      ')',
+    ),
+
     c_parameter: $ => choice(
       seq(
         field('type', $.c_type),
@@ -1689,9 +1703,9 @@ module.exports = grammar({
       field('return_type', $.c_type),
       '(',
       '*',
-      field('name', $.identifier),
+      field('name', optional($.identifier)),
       ')',
-      field('parameters', $.c_parameters),
+      field('parameters', alias($.c_function_pointer_parameters, $.c_parameters)),
       optional($._c_function_modifiers),
     )),
 
