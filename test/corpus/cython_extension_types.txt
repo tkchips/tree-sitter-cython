@@ -514,18 +514,21 @@ func["int[:, ::1]"](myarray)
   (ctypedef_fused_definition
     name: (identifier)
     body: (block
-      (c_type
-        (identifier)
-        suffix: (c_memoryview_declarator))
-      (c_type
-        (identifier)
-        suffix: (c_memoryview_declarator))))
+      (subscript
+        value: (identifier)
+        subscript: (slice)
+        subscript: (slice
+          (integer)))
+      (subscript
+        value: (identifier)
+        subscript: (slice)
+        subscript: (slice
+          (integer)))))
   (function_definition
     name: (identifier)
     parameters: (parameters
       (c_parameter
-        type: (c_type
-          (identifier))
+        type: (c_type)
         name: (identifier)))
     body: (block
       (call
