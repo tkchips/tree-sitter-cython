@@ -587,4 +587,114 @@ cdef class Scanner:
         visibility: (identifier)
         name: (identifier)))))
 
+================================================================================
+Test 1
+================================================================================
 
+#
+# Test function exports
+#
+
+cdef double plus1_cython(double a, int *error_flag, void *user_data) except * nogil
+cdef double plus1b_cython(double a, double b, int *error_flag, void *user_data) except * nogil
+cdef double plus1bc_cython(double a, double b, double c, int *error_flag, void *user_data) except * nogil
+
+cdef double sine(double a, void *user_data) except * nogil
+
+--------------------------------------------------------------------------------
+
+(module
+  (comment)
+  (comment)
+  (comment)
+  (cdef_function_declaration
+    (c_type
+      (identifier))
+    (identifier)
+    (c_parameters
+      (c_parameter
+        (c_type
+          (identifier))
+        (identifier))
+      (c_parameter
+        (c_type
+          (identifier)
+          (c_pointer_declarator))
+        (identifier))
+      (c_parameter
+        (c_type
+          (identifier)
+          (c_pointer_declarator))
+        (identifier)))
+    (cdef_except_clause)
+    (identifier))
+  (cdef_function_declaration
+    (c_type
+      (identifier))
+    (identifier)
+    (c_parameters
+      (c_parameter
+        (c_type
+          (identifier))
+        (identifier))
+      (c_parameter
+        (c_type
+          (identifier))
+        (identifier))
+      (c_parameter
+        (c_type
+          (identifier)
+          (c_pointer_declarator))
+        (identifier))
+      (c_parameter
+        (c_type
+          (identifier)
+          (c_pointer_declarator))
+        (identifier)))
+    (cdef_except_clause)
+    (identifier))
+  (cdef_function_declaration
+    (c_type
+      (identifier))
+    (identifier)
+    (c_parameters
+      (c_parameter
+        (c_type
+          (identifier))
+        (identifier))
+      (c_parameter
+        (c_type
+          (identifier))
+        (identifier))
+      (c_parameter
+        (c_type
+          (identifier))
+        (identifier))
+      (c_parameter
+        (c_type
+          (identifier)
+          (c_pointer_declarator))
+        (identifier))
+      (c_parameter
+        (c_type
+          (identifier)
+          (c_pointer_declarator))
+        (identifier)))
+    (cdef_except_clause)
+    (identifier))
+  (cdef_function_declaration
+    (c_type
+      (identifier))
+    (identifier)
+    (c_parameters
+      (c_parameter
+        (c_type
+          (identifier))
+        (identifier))
+      (c_parameter
+        (c_type
+          (identifier)
+          (c_pointer_declarator))
+        (identifier)))
+    (cdef_except_clause)
+    (identifier)))

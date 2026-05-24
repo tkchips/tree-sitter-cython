@@ -154,6 +154,7 @@ module.exports = grammar({
       $.cimport_statement,
       $.cimport_from_statement,
       $.cdef_attribute_declaration,
+      $.cdef_function_declaration,
       $.cdef_statement,
       $.ctypedef_statement,
       $.cython_def_statement,
@@ -1465,6 +1466,16 @@ module.exports = grammar({
       field('body', $._suite),
     )),
 
+    cdef_function_declaration: $ => prec(PREC.cdef + 2, seq(
+      'cdef',
+      optional('inline'),
+      optional('api'),
+      optional(field('return_type', $.c_type)),
+      field('name', $.identifier),
+      field('parameters', $.c_parameters),
+      optional($._c_function_modifiers),
+    )),
+
     c_parameters: $ => seq(
       '(',
       optional($._c_parameters_list),
@@ -1533,7 +1544,7 @@ module.exports = grammar({
 
     c_variadic_parameter: _ => '...',
 
-    cdef_except_clause: $ => seq(
+    cdef_except_clause: $ => prec.left(seq(
       'except',
       choice(
         '+',
@@ -1541,7 +1552,7 @@ module.exports = grammar({
         seq(optional('?'), $.expression),
         '*',
       ),
-    ),
+    )),
 
     c_noexcept_clause: $ => alias('noexcept', $.identifier),
 
@@ -1559,6 +1570,10 @@ module.exports = grammar({
       seq(
         field('nogil', alias('nogil', $.identifier)),
         optional(field('except_clause', $.cdef_except_clause)),
+      ),
+      seq(
+        field('except_clause', $.cdef_except_clause),
+        optional(field('nogil', alias('nogil', $.identifier))),
       ),
       field('except_clause', $.cdef_except_clause),
     ),

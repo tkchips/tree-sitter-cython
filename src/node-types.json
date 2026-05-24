@@ -118,6 +118,10 @@
         "named": true
       },
       {
+        "type": "cdef_function_declaration",
+        "named": true
+      },
+      {
         "type": "cdef_statement",
         "named": true
       },
@@ -2078,6 +2082,82 @@
           },
           {
             "type": "string",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "cdef_function_declaration",
+    "named": true,
+    "fields": {
+      "except_clause": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "cdef_except_clause",
+            "named": true
+          }
+        ]
+      },
+      "gil": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "noexcept": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "c_noexcept_clause",
+            "named": true
+          }
+        ]
+      },
+      "nogil": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "c_parameters",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "c_type",
             "named": true
           }
         ]
