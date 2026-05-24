@@ -171,6 +171,7 @@
   "case"
   "class"
   "continue"
+  "const"
   "def"
   "del"
   "elif"
