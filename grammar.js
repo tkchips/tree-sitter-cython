@@ -39,7 +39,7 @@ const PREC = {
 const SEMICOLON = ';';
 
 module.exports = grammar({
-  name: 'python',
+  name: 'cython',
 
   extras: $ => [
     $.comment,
@@ -57,23 +57,6 @@ module.exports = grammar({
     [$.print_statement, $.primary_expression],
     [$.type_alias_statement, $.primary_expression],
     [$.match_statement, $.primary_expression],
-    // Cython conflicts
-    [$.cimport_statement, $.primary_expression],
-    [$.cimport_from_statement, $.import_from_statement],
-    [$.cdef_statement, $.primary_expression],
-    [$.cdef_statement, $.cdef_function_definition],
-    [$.cdef_statement, $.cdef_class_definition],
-    [$.cdef_statement, $.cpp_class_definition],
-    [$.cdef_statement, $.cdef_extern_block],
-    [$.c_parameter, $.primary_expression],
-    [$.ctypedef_statement, $.primary_expression],
-    [$.ctypedef_statement, $.ctypedef_struct_definition],
-    [$.ctypedef_statement, $.ctypedef_fused_definition],
-    [$.cython_def_statement, $.primary_expression],
-    [$.cython_if_statement, $.primary_expression],
-    [$.cython_include_statement, $.primary_expression],
-    [$.cython_property_definition, $.primary_expression],
-    [$.primary_expression, $.cpp_constructor_declaration],
   ],
 
   supertypes: $ => [
@@ -170,6 +153,8 @@ module.exports = grammar({
       // Cython simple statements
       $.cimport_statement,
       $.cimport_from_statement,
+      $.cdef_attribute_declaration,
+      $.cdef_function_declaration,
       $.cdef_statement,
       $.ctypedef_statement,
       $.cython_def_statement,
@@ -312,11 +297,18 @@ module.exports = grammar({
       $.decorated_definition,
       $.match_statement,
       // Cython compound statements
+      $.cdef_block,
       $.cdef_function_definition,
       $.cdef_class_definition,
       $.cpp_class_definition,
+      $.ctypedef_struct_declaration,
       $.ctypedef_struct_definition,
+      $.ctypedef_enum_definition,
       $.ctypedef_fused_definition,
+      $.cdef_struct_definition,
+      $.cdef_union_definition,
+      $.c_struct_definition,
+      $.cdef_enum_definition,
       $.cdef_extern_block,
       $.cython_if_statement,
       $.cython_property_definition,
@@ -676,6 +668,11 @@ module.exports = grammar({
     ),
 
     parameter: $ => choice(
+      alias($._def_c_parameter, $.c_parameter),
+      $._python_parameter,
+    ),
+
+    _python_parameter: $ => choice(
       $.identifier,
       $.typed_parameter,
       $.default_parameter,
@@ -685,6 +682,18 @@ module.exports = grammar({
       $.keyword_separator,
       $.positional_separator,
       $.dictionary_splat_pattern,
+    ),
+
+    _def_c_type: $ => buildCType($, {
+      allowGroupedTypes: false,
+      aliasAsCType: true,
+    }),
+
+    _def_c_parameter: $ => seq(
+      field('type', $._def_c_type),
+      field('name', $.identifier),
+      optional(seq('not', field('not_none', $.none))),
+      optional(seq('=', field('default', $.expression))),
     ),
 
     pattern: $ => choice(
@@ -771,6 +780,7 @@ module.exports = grammar({
       $.true,
       $.false,
       $.none,
+      $.c_cast_expression,
       $.unary_operator,
       $.attribute,
       $.subscript,
@@ -835,6 +845,14 @@ module.exports = grammar({
     unary_operator: $ => prec(PREC.unary, seq(
       field('operator', choice('+', '-', '~')),
       field('argument', $.primary_expression),
+    )),
+
+    c_cast_expression: $ => prec(PREC.unary, seq(
+      '<',
+      field('type', choice($.c_function_pointer_type, $.c_type)),
+      optional(field('optional', alias('?', $.identifier))),
+      '>',
+      field('value', $.primary_expression),
     )),
 
     _not_in: _ => seq('not', 'in'),
@@ -1224,6 +1242,8 @@ module.exports = grammar({
           'inline',
           'api',
           'extern',
+          'noexcept',
+          'packed',
           'struct',
           'union',
           'enum',
@@ -1286,41 +1306,22 @@ module.exports = grammar({
 
     // --- Phase 2: C type system and cdef variable declarations ---
 
-    c_type: $ => {
-      const keyword = value => alias(value, $.identifier);
-      const integer_type = choice(
-        keyword('char'),
-        keyword('short'),
-        seq(keyword('short'), keyword('int')),
-        keyword('int'),
-        keyword('long'),
-        seq(keyword('long'), keyword('int')),
-        seq(keyword('long'), keyword('long')),
-        seq(keyword('long'), keyword('long'), keyword('int')),
-      );
-      const numeric_type = choice(
-        integer_type,
-        keyword('float'),
-        keyword('double'),
-        seq(keyword('long'), keyword('double')),
-      );
+    c_type: $ => buildCType($),
 
-      return prec.right(PREC.c_type, seq(
-        optional(keyword('const')),
-        choice(
-          seq(choice(keyword('unsigned'), keyword('signed')), choice(integer_type, $.identifier)),
-          numeric_type,
-          keyword('void'),
-          keyword('bint'),
-          $.identifier,
-        ),
-        optional(field('suffix', choice(
-          $.c_pointer_declarator,
-          $.c_reference_declarator,
-          $.c_memoryview_declarator,
-        ))),
-      ));
-    },
+    c_tuple_type: $ => seq(
+      '(',
+      $.c_type,
+      ',',
+      commaSep1($.c_type),
+      optional(','),
+      ')',
+    ),
+
+    parenthesized_c_type: $ => seq(
+      '(',
+      $.c_type,
+      ')',
+    ),
 
     c_pointer_declarator: _ => prec(PREC.c_type, repeat1('*')),
 
@@ -1337,9 +1338,33 @@ module.exports = grammar({
       seq(':', ':', $.expression),
     ),
 
-    c_declarator: $ => seq(
+    c_declarator: $ => choice(
+      seq(
+        field('function_pointer', $.c_function_pointer_declarator),
+        optional(seq('=', field('value', $.expression))),
+      ),
+      $._c_simple_declarator,
+    ),
+
+    _c_simple_declarator: $ => seq(
+      optional(field('prefix', $.c_pointer_declarator)),
       field('name', $.identifier),
+      optional(field('suffix', repeat1($.c_array_declarator))),
       optional(seq('=', field('value', $.expression))),
+    ),
+
+    c_function_pointer_declarator: $ => seq(
+      '(',
+      '*',
+      field('name', $.identifier),
+      ')',
+      field('parameters', $.c_declaration_parameters),
+    ),
+
+    c_array_declarator: $ => seq(
+      '[',
+      optional(field('size', $.integer)),
+      ']',
     ),
 
     cdef_statement: $ => prec(PREC.cdef, seq(
@@ -1349,11 +1374,83 @@ module.exports = grammar({
       commaSep1(field('declarator', $.c_declarator)),
     )),
 
+    cdef_attribute_declaration: $ => prec(PREC.cdef + 1, seq(
+      'cdef',
+      field('visibility', choice(
+        alias('public', $.identifier),
+        alias('readonly', $.identifier),
+      )),
+      field('name', $.identifier),
+    )),
+
     // bare typed declarations inside extern/struct blocks: `int x`
     c_variable_declaration: $ => prec(PREC.c_type, seq(
       field('type', $.c_type),
       commaSep1(field('declarator', $.c_declarator)),
     )),
+
+    c_variable_declaration_without_function_pointer: $ => prec(PREC.c_type, seq(
+      field('type', $.c_type),
+      commaSep1(field('declarator', $._c_simple_declarator)),
+    )),
+
+    cdef_block: $ => prec(PREC.cdef + 1, seq(
+      'cdef',
+      ':',
+      field('body', $._cython_extern_suite),
+    )),
+
+    cdef_struct_definition: $ => prec(PREC.cdef + 1, seq(
+      'cdef',
+      optional(field('modifier', alias('packed', $.identifier))),
+      field('kind', alias('struct', $.identifier)),
+      field('name', $.identifier),
+      ':',
+      field('body', $._cython_extern_suite),
+    )),
+
+    cdef_union_definition: $ => prec(PREC.cdef + 1, seq(
+      'cdef',
+      field('kind', alias('union', $.identifier)),
+      field('name', $.identifier),
+      ':',
+      field('body', $._cython_extern_suite),
+    )),
+
+    c_struct_definition: $ => prec(PREC.cdef + 1, seq(
+      field('kind', alias('struct', $.identifier)),
+      field('name', $.identifier),
+      ':',
+      field('body', $._cython_extern_suite),
+    )),
+
+    cdef_enum_definition: $ => prec(PREC.cdef + 1, seq(
+      choice('cdef', 'cpdef'),
+      'enum',
+      optional(field('name', $.identifier)),
+      ':',
+      field('body', $._c_enum_suite),
+    )),
+
+    c_enum_member: $ => seq(
+      field('name', $.identifier),
+      optional(seq('=', field('value', $.expression))),
+    ),
+
+    _c_enum_members: $ => seq(
+      commaSep1($.c_enum_member),
+      optional(','),
+    ),
+
+    _c_enum_suite: $ => choice(
+      seq($._indent, alias($._c_enum_block, $.block)),
+      alias($._newline, $.block),
+    ),
+
+    _c_enum_block: $ => seq(
+      repeat(seq($._c_enum_members, $._newline)),
+      $._dedent,
+    ),
 
     // --- Phase 3: cdef/cpdef function definitions ---
 
@@ -1364,10 +1461,19 @@ module.exports = grammar({
       optional(field('return_type', $.c_type)),
       field('name', $.identifier),
       field('parameters', $.c_parameters),
-      optional('nogil'),
-      optional(field('except_clause', $.cdef_except_clause)),
+      optional($._c_function_modifiers),
       ':',
       field('body', $._suite),
+    )),
+
+    cdef_function_declaration: $ => prec(PREC.cdef + 2, seq(
+      'cdef',
+      optional('inline'),
+      optional('api'),
+      optional(field('return_type', $.c_type)),
+      field('name', $.identifier),
+      field('parameters', $.c_parameters),
+      optional($._c_function_modifiers),
     )),
 
     c_parameters: $ => seq(
@@ -1383,13 +1489,27 @@ module.exports = grammar({
     ),
 
     _c_parameters_list: $ => seq(
-      commaSep1($.c_parameter),
+      commaSep1(choice($.c_parameter, $.c_variadic_parameter)),
       optional(','),
     ),
 
     _c_declaration_parameters_list: $ => seq(
-      commaSep1($.c_declaration_parameter),
+      commaSep1(choice($.c_declaration_parameter, $.c_variadic_parameter)),
       optional(','),
+    ),
+
+    _c_function_pointer_parameters_list: $ => seq(
+      commaSep1(choice(
+        alias($.c_declaration_parameter, $.c_parameter),
+        $.c_variadic_parameter,
+      )),
+      optional(','),
+    ),
+
+    c_function_pointer_parameters: $ => seq(
+      '(',
+      optional($._c_function_pointer_parameters_list),
+      ')',
     ),
 
     c_parameter: $ => choice(
@@ -1398,10 +1518,18 @@ module.exports = grammar({
         field('name', $.identifier),
         optional(seq('=', field('default', $.expression))),
       ),
-      $.parameter,
+      seq(
+        field('type', $.c_function_pointer_type),
+        optional(seq('=', field('default', $.expression))),
+      ),
+      $._python_parameter,
     ),
 
     c_declaration_parameter: $ => choice(
+      seq(
+        field('type', $.c_function_pointer_type),
+        optional(seq('=', field('default', $.expression))),
+      ),
       seq(
         field('type', $.c_type),
         field('name', $.identifier),
@@ -1411,10 +1539,12 @@ module.exports = grammar({
         field('type', $.c_type),
         optional(seq('=', field('default', $.expression))),
       ),
-      $.parameter,
+      $._python_parameter,
     ),
 
-    cdef_except_clause: $ => seq(
+    c_variadic_parameter: _ => '...',
+
+    cdef_except_clause: $ => prec.left(seq(
       'except',
       choice(
         '+',
@@ -1422,15 +1552,39 @@ module.exports = grammar({
         seq(optional('?'), $.expression),
         '*',
       ),
+    )),
+
+    c_noexcept_clause: $ => alias('noexcept', $.identifier),
+
+    _c_function_modifiers: $ => choice(
+      seq(
+        field('noexcept', $.c_noexcept_clause),
+        optional(field('nogil', alias('nogil', $.identifier))),
+        optional(field('except_clause', $.cdef_except_clause)),
+      ),
+      seq(
+        'with',
+        field('gil', alias('gil', $.identifier)),
+        optional(field('except_clause', $.cdef_except_clause)),
+      ),
+      seq(
+        field('nogil', alias('nogil', $.identifier)),
+        optional(field('except_clause', $.cdef_except_clause)),
+      ),
+      seq(
+        field('except_clause', $.cdef_except_clause),
+        optional(field('nogil', alias('nogil', $.identifier))),
+      ),
+      field('except_clause', $.cdef_except_clause),
     ),
 
-    // bare function declarations inside extern blocks: `double sin(double x)`
+    // bare function declarations inside extern blocks: `T sin[T](T x)`
     c_function_declaration: $ => prec(PREC.cdef, seq(
       field('return_type', $.c_type),
       field('name', $.identifier),
+      optional(field('type_parameters', $.c_template_parameters)),
       field('parameters', $.c_declaration_parameters),
-      optional('nogil'),
-      optional(field('except_clause', $.cdef_except_clause)),
+      optional($._c_function_modifiers),
     )),
 
     // Custom suite for cdef extern blocks and ctypedef struct/union/enum bodies
@@ -1482,10 +1636,16 @@ module.exports = grammar({
     _cpp_class_block: $ => seq(
       repeat(choice(
         $._statement,
-        $._cython_declaration_statements,
+        $._cpp_class_cython_declaration_statements,
         $._cpp_class_declaration_statements,
       )),
       $._dedent,
+    ),
+
+    _cpp_class_cython_declaration_statements: $ => seq(
+      sep1(choice($.c_function_declaration, $.c_variable_declaration_without_function_pointer), SEMICOLON),
+      optional(SEMICOLON),
+      $._newline,
     ),
 
     _cpp_class_declaration_statements: $ => seq(
@@ -1497,28 +1657,28 @@ module.exports = grammar({
       $._newline,
     ),
 
-    cpp_constructor_declaration: $ => seq(
+    cpp_constructor_declaration: $ => prec(PREC.c_type + 1, seq(
       field('name', $.identifier),
       field('parameters', $.c_declaration_parameters),
-      optional(field('except_clause', $.cdef_except_clause)),
-    ),
+      optional($._c_function_modifiers),
+    )),
 
-    cpp_operator_declaration: $ => seq(
+    cpp_operator_declaration: $ => prec(PREC.c_type + 1, seq(
       optional(field('return_type', $.c_type)),
       field('operator', $.cpp_operator),
       optional(field('type_parameters', $.c_template_parameters)),
       field('parameters', $.c_declaration_parameters),
-      optional(field('except_clause', $.cdef_except_clause)),
-    ),
+      optional($._c_function_modifiers),
+    )),
 
     cpp_operator: $ => seq(
       'operator',
       choice(
         '+', '-', '*', '/', '%', '^', // Arithmetic
-        '&', '|', '~', '!', //Bitwise
+        '&', '|', '~', '!', // Bitwise
         '=', // Assignmnet
         '<', '>', '==', '!=', '<=', '>=', // Comparison
-        '<<', '>>', // Shift        
+        '<<', '>>', // Shift
         '++', '--', // Increment
         ',', seq('(', ')'), seq('[', ']'), // Access
         $.c_type,
@@ -1543,23 +1703,57 @@ module.exports = grammar({
 
     // --- Phase 5: ctypedef ---
 
-    ctypedef_statement: $ => seq(
+    ctypedef_statement: $ => prec(PREC.cdef, seq(
       'ctypedef',
-      field('type', $.c_type),
-      field('name', $.identifier),
-    ),
+      choice(
+        field('type', $.c_function_pointer_type),
+        seq(
+          field('type', $.c_type),
+          field('name', $.identifier),
+        ),
+      ),
+    )),
+
+    c_function_pointer_type: $ => prec(PREC.cdef + 1, seq(
+      field('return_type', $.c_type),
+      '(',
+      '*',
+      field('name', optional($.identifier)),
+      ')',
+      field('parameters', alias($.c_function_pointer_parameters, $.c_parameters)),
+      optional($._c_function_modifiers),
+    )),
+
+    ctypedef_struct_declaration: $ => prec(PREC.cdef, seq(
+      'ctypedef',
+      $._ctypedef_struct_head,
+      optional(field('cname', $.string)),
+    )),
 
     ctypedef_struct_definition: $ => prec(PREC.cdef + 1, seq(
       'ctypedef',
+      $._ctypedef_struct_head,
+      optional(field('cname', $.string)),
+      ':',
+      field('body', $._cython_extern_suite),
+    )),
+
+    ctypedef_enum_definition: $ => prec(PREC.cdef + 2, seq(
+      'ctypedef',
+      field('kind', alias('enum', $.identifier)),
+      field('name', $.identifier),
+      ':',
+      field('body', $._c_enum_suite),
+    )),
+
+    _ctypedef_struct_head: $ => seq(
       field('kind', choice(
         alias('struct', $.identifier),
         alias('union', $.identifier),
         alias('enum', $.identifier),
       )),
       field('name', $.identifier),
-      ':',
-      field('body', $._cython_extern_suite),
-    )),
+    ),
 
     ctypedef_fused_definition: $ => seq(
       'ctypedef',
@@ -1656,4 +1850,69 @@ function commaSep1(rule) {
  */
 function sep1(rule, separator) {
   return seq(rule, repeat(seq(separator, rule)));
+}
+
+/**
+ * Creates a C type rule, with minor context-dependent switches.
+ *
+ * @param {GrammarSymbols<string>} $
+ * @param {{
+ *   allowGroupedTypes?: boolean,
+ *   aliasAsCType?: boolean,
+ * }} [options]
+ *
+ * @returns {Rule}
+ */
+function buildCType($, options = {}) {
+  const {
+    allowGroupedTypes = true,
+    aliasAsCType = false,
+  } = options;
+
+  const keyword = value => alias(value, $.identifier);
+  const complex_keyword = alias(token(prec(1, 'complex')), $.identifier);
+  const integer_type = choice(
+    keyword('char'),
+    keyword('short'),
+    seq(keyword('short'), keyword('int')),
+    keyword('int'),
+    keyword('long'),
+    seq(keyword('long'), keyword('int')),
+    seq(keyword('long'), keyword('long')),
+    seq(keyword('long'), keyword('long'), keyword('int')),
+  );
+  const numeric_type = choice(
+    integer_type,
+    seq(keyword('float'), complex_keyword),
+    seq(keyword('double'), complex_keyword),
+    seq(keyword('long'), keyword('double'), complex_keyword),
+    keyword('float'),
+    keyword('double'),
+    seq(keyword('long'), keyword('double')),
+  );
+
+  const core_type = prec.right(PREC.c_type, seq(
+    optional('const'),
+    choice(
+      seq(choice(keyword('unsigned'), keyword('signed')), choice(integer_type, $.identifier)),
+      numeric_type,
+      keyword('void'),
+      keyword('bint'),
+      ...(allowGroupedTypes ? [$.c_tuple_type, $.parenthesized_c_type] : []),
+      $.dotted_name,
+      $.identifier,
+    ),
+    optional(field('suffix', choice(
+      $.c_pointer_declarator,
+      $.c_reference_declarator,
+      $.c_memoryview_declarator,
+      repeat1($.c_array_declarator),
+    ))),
+  ));
+
+  if (aliasAsCType) {
+    return alias(core_type, $.c_type);
+  }
+
+  return core_type;
 }

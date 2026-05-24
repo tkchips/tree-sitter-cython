@@ -1,0 +1,1000 @@
+================================================================================
+C global variable declarations
+================================================================================
+
+cdef int a_global_variable_0
+cdef int a_global_variable_1 = 42
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_statement
+    (c_type
+      (identifier))
+    (c_declarator
+      (identifier)))
+  (cdef_statement
+    (c_type
+      (identifier))
+    (c_declarator
+      (identifier)
+      (integer))))
+
+================================================================================
+C local variable declarations
+================================================================================
+
+def func_0():
+    cdef int i, j, k
+    cdef float f
+    cdef float *h
+
+def func_1():
+    cdef int i = 42, j, k
+    cdef int a = 0, b = 1, c = 2
+    cdef float f = 3.14
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier))
+        (c_declarator
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier)
+          (c_pointer_declarator))
+        (c_declarator
+          (identifier)))))
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)
+          (integer))
+        (c_declarator
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)
+          (integer))
+        (c_declarator
+          (identifier)
+          (integer))
+        (c_declarator
+          (identifier)
+          (integer)))
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)
+          (float))))))
+
+================================================================================
+C base types
+================================================================================
+
+def func_2():
+    cdef bint b
+    cdef char c
+    cdef signed char sc
+    cdef unsigned char uc
+    cdef short s
+    cdef unsigned short us
+    cdef int i
+    cdef unsigned int ui
+    cdef long l
+    cdef unsigned long ul
+    cdef long long ll
+    cdef unsigned long long ull
+    cdef float f
+    cdef double d
+    cdef long double ld
+    cdef size_t ss
+    cdef Py_ssize_t pss
+    cdef Py_hash_t ph
+    cdef Py_UCS4 pu
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier)
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier)
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier)
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier)
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier)
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier)
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier)
+          (identifier)
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier)
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier))))))
+
+================================================================================
+C typedef statements
+================================================================================
+
+ctypedef unsigned long ULong
+ctypedef int* IntPtr
+
+--------------------------------------------------------------------------------
+
+(module
+  (ctypedef_statement
+    (c_type
+      (identifier)
+      (identifier))
+    (identifier))
+  (ctypedef_statement
+    (c_type
+      (identifier)
+      (c_pointer_declarator))
+    (identifier)))
+
+================================================================================
+C array declarators
+================================================================================
+
+def func_3():
+    cdef float[42] g
+    cdef float g[42]
+    cdef int f[5]
+    cdef int arr1[4], arr2[4]
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (cdef_statement
+        (c_type
+          (identifier)
+          (c_array_declarator
+            (integer)))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)
+          (c_array_declarator
+            (integer))))
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)
+          (c_array_declarator
+            (integer))))
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)
+          (c_array_declarator
+            (integer)))
+        (c_declarator
+          (identifier)
+          (c_array_declarator
+            (integer)))))))
+
+================================================================================
+C structs unions and enums
+================================================================================
+
+cdef struct Point:
+    double x
+    double y
+
+def func_4():
+    cdef Point p
+    p.x = 1.0
+    p.y = 2.0
+
+cdef union Food:
+    int spam
+    float eggs
+
+cdef enum CheeseState:
+    hard = 1
+    soft = 2
+    runny = 3
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_struct_definition
+    (identifier)
+    (identifier)
+    (block
+      (c_variable_declaration
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (c_variable_declaration
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))))
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (assignment
+        (attribute
+          (identifier)
+          (identifier))
+        (float))
+      (assignment
+        (attribute
+          (identifier)
+          (identifier))
+        (float))))
+  (cdef_union_definition
+    (identifier)
+    (identifier)
+    (block
+      (c_variable_declaration
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (c_variable_declaration
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))))
+  (cdef_enum_definition
+    (identifier)
+    (block
+      (c_enum_member
+        (identifier)
+        (integer))
+      (c_enum_member
+        (identifier)
+        (integer))
+      (c_enum_member
+        (identifier)
+        (integer)))))
+
+================================================================================
+Cython extension type
+================================================================================
+
+cdef class Shrubbery:
+    cdef int width
+    cdef int height
+
+    def __init__(self, w, h):
+        self.width = w
+        self.height = h
+
+    def describe(self):
+        print("This shrubbery is", self.width, "by", self.height, "cubits.")
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_class_definition
+    (identifier)
+    (block
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (function_definition
+        (identifier)
+        (parameters
+          (identifier)
+          (identifier)
+          (identifier))
+        (block
+          (assignment
+            (attribute
+              (identifier)
+              (identifier))
+            (identifier))
+          (assignment
+            (attribute
+              (identifier)
+              (identifier))
+            (identifier))))
+      (function_definition
+        (identifier)
+        (parameters
+          (identifier))
+        (block
+          (call
+            (identifier)
+            (argument_list
+              (string
+                (string_start)
+                (string_content)
+                (string_end))
+              (attribute
+                (identifier)
+                (identifier))
+              (string
+                (string_start)
+                (string_content)
+                (string_end))
+              (attribute
+                (identifier)
+                (identifier))
+              (string
+                (string_start)
+                (string_content)
+                (string_end)))))))))
+
+================================================================================
+Grouped cdef declarations
+================================================================================
+
+cdef:
+    struct Spam:
+        int tons
+
+    int i
+    float a
+    Spam *p
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_block
+    (block
+      (c_struct_definition
+        (identifier)
+        (identifier)
+        (block
+          (c_variable_declaration
+            (c_type
+              (identifier))
+            (c_declarator
+              (identifier)))))
+      (c_variable_declaration
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (c_variable_declaration
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (c_variable_declaration
+        (c_type
+          (identifier)
+          (c_pointer_declarator))
+        (c_declarator
+          (identifier))))))
+
+================================================================================
+C and Python functions
+================================================================================
+
+cdef int eggs(unsigned long l, float f):
+    pass
+
+def convert_args(python_i, python_s):
+    cdef int i = python_i
+    cdef char* s = python_s
+
+cdef eggs1(x, y):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_function_definition
+    (c_type
+      (identifier))
+    (identifier)
+    (c_parameters
+      (c_parameter
+        (c_type
+          (identifier)
+          (identifier))
+        (identifier))
+      (c_parameter
+        (c_type
+          (identifier))
+        (identifier)))
+    (block
+      (pass_statement)))
+  (function_definition
+    (identifier)
+    (parameters
+      (identifier)
+      (identifier))
+    (block
+      (cdef_statement
+        (c_type
+          (identifier))
+        (c_declarator
+          (identifier)
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier)
+          (c_pointer_declarator))
+        (c_declarator
+          (identifier)
+          (identifier)))))
+  (cdef_function_definition
+    (identifier)
+    (c_parameters
+      (c_parameter
+        (identifier))
+      (c_parameter
+        (identifier)))
+    (block
+      (pass_statement))))
+
+================================================================================
+Optional arguments
+================================================================================
+
+cdef class A:
+    cdef foo(self):
+        pass
+
+cdef class B(A):
+    cdef foo(self, x=None):
+        pass
+
+cdef class C(B):
+    cpdef foo(self, x=True, int k=3):
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_class_definition
+    (identifier)
+    (block
+      (cdef_function_definition
+        (identifier)
+        (c_parameters
+          (c_parameter
+            (identifier)))
+        (block
+          (pass_statement)))))
+  (cdef_class_definition
+    (identifier)
+    (argument_list
+      (identifier))
+    (block
+      (cdef_function_definition
+        (identifier)
+        (c_parameters
+          (c_parameter
+            (identifier))
+          (c_parameter
+            (default_parameter
+              (identifier)
+              (none))))
+        (block
+          (pass_statement)))))
+  (cdef_class_definition
+    (identifier)
+    (argument_list
+      (identifier))
+    (block
+      (cdef_function_definition
+        (identifier)
+        (c_parameters
+          (c_parameter
+            (identifier))
+          (c_parameter
+            (default_parameter
+              (identifier)
+              (true)))
+          (c_parameter
+            (c_type
+              (identifier))
+            (identifier)
+            (integer)))
+        (block
+          (pass_statement))))))
+
+================================================================================
+C local variable C array syntax
+================================================================================
+
+def func_0():
+    cdef float[42] g
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (cdef_statement
+        (c_type
+          (identifier)
+          (c_array_declarator
+            (integer)))
+        (c_declarator
+          (identifier))))))
+
+================================================================================
+C local variable with initialization and complex type
+================================================================================
+
+def func_1():
+    cdef float[4] g = [0.0, 1.0, 2.0, 3.0]
+    cdef double complex z = 1.0 + 2.0j
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (cdef_statement
+        (c_type
+          (identifier)
+          (c_array_declarator
+            (integer)))
+        (c_declarator
+          (identifier)
+          (list
+            (float)
+            (float)
+            (float)
+            (float))))
+      (cdef_statement
+        (c_type
+          (identifier)
+          (identifier))
+        (c_declarator
+          (identifier)
+          (binary_operator
+            (float)
+            (float)))))))
+
+================================================================================
+C base complex types
+================================================================================
+
+def func_2():
+    cdef float complex f_c
+    cdef double complex d_c
+    cdef long double complex ld_c
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (cdef_statement
+        (c_type
+          (identifier)
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier)
+          (identifier))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier)
+          (identifier)
+          (identifier))
+        (c_declarator
+          (identifier))))))
+
+================================================================================
+C arrays in type position
+================================================================================
+
+def func_3():
+    cdef float[42] g
+    cdef int[5][5][5] f
+    cdef char[4] *ptr_char_array
+    cdef (char *)[4] array_ptr_char
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    (identifier)
+    (parameters)
+    (block
+      (cdef_statement
+        (c_type
+          (identifier)
+          (c_array_declarator
+            (integer)))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier)
+          (c_array_declarator
+            (integer))
+          (c_array_declarator
+            (integer))
+          (c_array_declarator
+            (integer)))
+        (c_declarator
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (identifier)
+          (c_array_declarator
+            (integer)))
+        (c_declarator
+          (c_pointer_declarator)
+          (identifier)))
+      (cdef_statement
+        (c_type
+          (parenthesized_c_type
+            (c_type
+              (identifier)
+              (c_pointer_declarator)))
+          (c_array_declarator
+            (integer)))
+        (c_declarator
+          (identifier))))))
+
+================================================================================
+C packed structs
+================================================================================
+
+cdef packed struct StructArray:
+    int[4] spam
+    signed char[5] eggs
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_struct_definition
+    (identifier)
+    (identifier)
+    (identifier)
+    (block
+      (c_variable_declaration
+        (c_type
+          (identifier)
+          (c_array_declarator
+            (integer)))
+        (c_declarator
+          (identifier)))
+      (c_variable_declaration
+        (c_type
+          (identifier)
+          (identifier)
+          (c_array_declarator
+            (integer)))
+        (c_declarator
+          (identifier))))))
+
+================================================================================
+C enum comma members
+================================================================================
+
+cdef enum CheeseType:
+    cheddar, edam,
+    camembert
+
+cdef enum CheeseType2:
+    cheddar2, edam2, camembert2
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_enum_definition
+    (identifier)
+    (block
+      (c_enum_member
+        (identifier))
+      (c_enum_member
+        (identifier))
+      (c_enum_member
+        (identifier))))
+  (cdef_enum_definition
+    (identifier)
+    (block
+      (c_enum_member
+        (identifier))
+      (c_enum_member
+        (identifier))
+      (c_enum_member
+        (identifier)))))
+
+================================================================================
+Cpdef enum
+================================================================================
+
+cpdef enum CheeseState:
+    hard = 1
+    soft = 2
+    runny = 3
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_enum_definition
+    (identifier)
+    (block
+      (c_enum_member
+        (identifier)
+        (integer))
+      (c_enum_member
+        (identifier)
+        (integer))
+      (c_enum_member
+        (identifier)
+        (integer)))))
+
+================================================================================
+C tuple like
+================================================================================
+
+cdef (double, int) bar
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_statement
+    (c_type
+      (c_tuple_type
+        (c_type
+          (identifier))
+        (c_type
+          (identifier))))
+    (c_declarator
+      (identifier))))
+
+================================================================================
+C functions with tuple like return type
+================================================================================
+
+cdef (int, float) chips((long, long, double) t):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_function_definition
+    (c_type
+      (c_tuple_type
+        (c_type
+          (identifier))
+        (c_type
+          (identifier))))
+    (identifier)
+    (c_parameters
+      (c_parameter
+        (c_type
+          (c_tuple_type
+            (c_type
+              (identifier))
+            (c_type
+              (identifier))
+            (c_type
+              (identifier))))
+      (identifier)))
+    (block
+      (pass_statement))))
+
+
+================================================================================
+Function pointer variable
+================================================================================
+
+cdef int(*ptr_add)(int, int)
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_statement
+    (c_type
+      (identifier))
+    (c_declarator
+      (c_function_pointer_declarator
+        (identifier)
+        (c_declaration_parameters
+          (c_declaration_parameter
+            (c_type
+              (identifier)))
+          (c_declaration_parameter
+            (c_type
+              (identifier))))))))
+
+================================================================================
+Noexcept function
+================================================================================
+
+cdef int func_without_error() noexcept:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_function_definition
+    (c_type
+      (identifier))
+    (identifier)
+    (c_parameters)
+    (c_noexcept_clause
+      (identifier))
+    (block
+      (pass_statement))))
+
+================================================================================
+Type casting
+================================================================================
+
+cdef char *char_ptr
+cdef float *float_ptr
+float_ptr = <float*>char_ptr
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_statement
+    (c_type
+      (identifier)
+      (c_pointer_declarator))
+    (c_declarator
+      (identifier)))
+  (cdef_statement
+    (c_type
+      (identifier)
+      (c_pointer_declarator))
+    (c_declarator
+      (identifier)))
+  (assignment
+    (identifier)
+    (c_cast_expression
+      (c_type
+        (identifier)
+        (c_pointer_declarator))
+      (identifier))))

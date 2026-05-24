@@ -9,11 +9,14 @@ on:
     paths:
       - src/scanner.c
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   fuzz:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Run fuzzer
         uses: tree-sitter/fuzz-action@v4

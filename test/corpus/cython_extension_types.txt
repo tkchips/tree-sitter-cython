@@ -1,0 +1,736 @@
+================================================================================
+Cython class
+================================================================================
+
+cdef class Shrubbery_0:
+    cdef int width
+    cdef int height
+
+    def __init__(self, w, h):
+        self.width = w
+        self.height = h
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_class_definition
+    name: (identifier)
+    body: (block
+      (cdef_statement
+        type: (c_type
+          (identifier))
+        declarator: (c_declarator
+          name: (identifier)))
+      (cdef_statement
+        type: (c_type
+          (identifier))
+        declarator: (c_declarator
+          name: (identifier)))
+      (function_definition
+        name: (identifier)
+        parameters: (parameters
+          (identifier)
+          (identifier)
+          (identifier))
+        body: (block
+          (assignment
+            left: (attribute
+              object: (identifier)
+              attribute: (identifier))
+            right: (identifier))
+          (assignment
+            left: (attribute
+              object: (identifier)
+              attribute: (identifier))
+            right: (identifier)))))))
+
+================================================================================
+Cython Static Attributes
+================================================================================
+
+cdef class Shrubbery_1:
+    cdef public int width, height
+
+    cdef readonly float depth
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_class_definition
+    name: (identifier)
+    body: (block
+      (cdef_statement
+        type: (c_type
+          (identifier))
+        declarator: (c_declarator
+          name: (identifier))
+        declarator: (c_declarator
+          name: (identifier)))
+      (cdef_statement
+        type: (c_type
+          (identifier))
+        declarator: (c_declarator
+          name: (identifier))))))
+
+================================================================================
+Cython Dynamic Attributes
+================================================================================
+
+cdef class Animal:
+    cdef int number_of_legs
+    def __init__(self, int number_of_legs):
+        self.number_of_legs = number_of_legs
+
+class ExtendableAnimal(Animal):
+    pass
+
+dog = ExtendableAnimal(4)
+dog.has_tail = True
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_class_definition
+    name: (identifier)
+    body: (block
+      (cdef_statement
+        type: (c_type
+          (identifier))
+        declarator: (c_declarator
+          name: (identifier)))
+      (function_definition
+        name: (identifier)
+        parameters: (parameters
+          (identifier)
+          (c_parameter
+            type: (identifier)
+            name: (identifier)))
+        body: (block
+          (assignment
+            left: (attribute
+              object: (identifier)
+              attribute: (identifier))
+            right: (identifier))))))
+  (class_definition
+    name: (identifier)
+    superclasses: (argument_list
+      (identifier))
+    body: (block
+      (pass_statement)))
+  (assignment
+    left: (identifier)
+    right: (call
+      function: (identifier)
+      arguments: (argument_list
+        (integer))))
+  (assignment
+    left: (attribute
+      object: (identifier)
+      attribute: (identifier))
+    right: (true)))
+
+================================================================================
+Cython Dynamic Attributes 2
+================================================================================
+
+cdef Shrubbery another_shrubbery(Shrubbery sh1):
+    cdef Shrubbery sh2
+    return sh2
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_function_definition
+    return_type: (c_type
+      (identifier))
+    name: (identifier)
+    parameters: (c_parameters
+      (c_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier)))
+    body: (block
+      (cdef_statement
+        type: (c_type
+          (identifier))
+        declarator: (c_declarator
+          name: (identifier)))
+      (return_statement
+        (identifier)))))
+
+================================================================================
+Type Testing and Casting
+================================================================================
+
+print( (<Shrubbery>quest()).width )
+print( (<Shrubbery?>quest()).width )
+
+--------------------------------------------------------------------------------
+
+(module
+  (call
+    function: (identifier)
+    arguments: (argument_list
+      (attribute
+        object: (parenthesized_expression
+          (c_cast_expression
+            type: (c_type
+              (identifier))
+            value: (call
+              function: (identifier)
+              arguments: (argument_list))))
+        attribute: (identifier))))
+  (call
+    function: (identifier)
+    arguments: (argument_list
+      (attribute
+        object: (parenthesized_expression
+          (c_cast_expression
+            type: (c_type
+              (identifier))
+            optional: (identifier)
+            value: (call
+              function: (identifier)
+              arguments: (argument_list))))
+        attribute: (identifier)))))
+
+================================================================================
+Python function declared as an extension type with a not None clause
+================================================================================
+
+def widen_shrubbery(Shrubbery sh not None, extra_width):
+    sh.width = sh.width + extra_width
+
+--------------------------------------------------------------------------------
+
+(module
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (c_parameter
+        type: (c_type)
+        name: (identifier)
+        not_none: (none))
+      (identifier))
+    body: (block
+      (assignment
+        left: (attribute
+          object: (identifier)
+          attribute: (identifier))
+        right: (binary_operator
+          left: (attribute
+            object: (identifier)
+            attribute: (identifier))
+          right: (identifier))))))
+
+================================================================================
+C Method in Cython class
+================================================================================
+
+cdef class Parrot:
+    cdef void describe(self):
+        pass
+
+
+cdef class Norwegian(Parrot):
+    cdef void describe(self):
+        Parrot.describe(self)
+        pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_class_definition
+    name: (identifier)
+    body: (block
+      (cdef_function_definition
+        return_type: (c_type
+          (identifier))
+        name: (identifier)
+        parameters: (c_parameters
+          (c_parameter
+            (identifier)))
+        body: (block
+          (pass_statement)))))
+  (cdef_class_definition
+    name: (identifier)
+    superclasses: (argument_list
+      (identifier))
+    body: (block
+      (cdef_function_definition
+        return_type: (c_type
+          (identifier))
+        name: (identifier)
+        parameters: (c_parameters
+          (c_parameter
+            (identifier)))
+        body: (block
+          (call
+            function: (attribute
+              object: (identifier)
+              attribute: (identifier))
+            arguments: (argument_list
+              (identifier)))
+          (pass_statement))))))
+
+================================================================================
+Cython GIL
+================================================================================
+
+with nogil:
+    pass
+
+with gil:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (with_statement
+    (with_clause
+      (with_item
+        value: (identifier)))
+    body: (block
+      (pass_statement)))
+  (with_statement
+    (with_clause
+      (with_item
+        value: (identifier)))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Function with gil
+================================================================================
+
+cdef void my_callback(void *data) with gil:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_function_definition
+    return_type: (c_type
+      (identifier))
+    name: (identifier)
+    parameters: (c_parameters
+      (c_parameter
+        type: (c_type
+          (identifier)
+          suffix: (c_pointer_declarator))
+        name: (identifier)))
+    gil: (identifier)
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Conditional Acquiring / Releasing the GIL
+================================================================================
+
+with nogil(True):
+    pass
+
+with gil(False):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (with_statement
+    (with_clause
+      (with_item
+        value: (call
+          function: (identifier)
+          arguments: (argument_list
+            (true)))))
+    body: (block
+      (pass_statement)))
+  (with_statement
+    (with_clause
+      (with_item
+        value: (call
+          function: (identifier)
+          arguments: (argument_list
+            (false)))))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Declaring a function as callable without the GIL
+================================================================================
+
+cdef void my_gil_free_func(int spam) nogil:
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_function_definition
+    return_type: (c_type
+      (identifier))
+    name: (identifier)
+    parameters: (c_parameters
+      (c_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier)))
+    nogil: (identifier)
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Fused Types 1
+================================================================================
+
+ctypedef fused char_or_float:
+    char
+    double
+
+cpdef char_or_float plus_one(char_or_float var):
+    return var + 1
+
+--------------------------------------------------------------------------------
+
+(module
+  (ctypedef_fused_definition
+    name: (identifier)
+    body: (block
+      (identifier)
+      (identifier)))
+  (cdef_function_definition
+    return_type: (c_type
+      (identifier))
+    name: (identifier)
+    parameters: (c_parameters
+      (c_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier)))
+    body: (block
+      (return_statement
+        (binary_operator
+          left: (identifier)
+          right: (integer))))))
+
+================================================================================
+Fused Types 2
+================================================================================
+
+ctypedef double my_double
+ctypedef fused fused_type:
+    int
+    my_double
+
+--------------------------------------------------------------------------------
+
+(module
+  (ctypedef_statement
+    type: (c_type
+      (identifier))
+    name: (identifier))
+  (ctypedef_fused_definition
+    name: (identifier)
+    body: (block
+      (identifier)
+      (identifier))))
+
+================================================================================
+Using Fused Types
+================================================================================
+
+cdef cfunc(my_fused_type arg1, my_fused_type arg2):
+    return arg1 + arg2
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_function_definition
+    name: (identifier)
+    parameters: (c_parameters
+      (c_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier))
+      (c_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier)))
+    body: (block
+      (return_statement
+        (binary_operator
+          left: (identifier)
+          right: (identifier))))))
+
+================================================================================
+Fused Types and Arrays
+================================================================================
+
+cdef myfunc(fused_type[:, :] x):
+   pass
+
+cdef otherfunc(fused_type *x):
+    pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_function_definition
+    name: (identifier)
+    parameters: (c_parameters
+      (c_parameter
+        type: (c_type
+          (identifier)
+          suffix: (c_memoryview_declarator))
+        name: (identifier)))
+    body: (block
+      (pass_statement)))
+  (cdef_function_definition
+    name: (identifier)
+    parameters: (c_parameters
+      (c_parameter
+        type: (c_type
+          (identifier)
+          suffix: (c_pointer_declarator))
+        name: (identifier)))
+    body: (block
+      (pass_statement))))
+
+================================================================================
+Fused Types 3
+================================================================================
+
+ctypedef fused my_fused_type:
+    int[:, ::1]
+    float[:, ::1]
+
+def func(my_fused_type array):
+    print("func called:", cython.typeof(array))
+
+func["int[:, ::1]"](myarray)
+
+--------------------------------------------------------------------------------
+
+(module
+  (ctypedef_fused_definition
+    name: (identifier)
+    body: (block
+      (subscript
+        value: (identifier)
+        subscript: (slice)
+        subscript: (slice
+          (integer)))
+      (subscript
+        value: (identifier)
+        subscript: (slice)
+        subscript: (slice
+          (integer)))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (c_parameter
+        type: (c_type)
+        name: (identifier)))
+    body: (block
+      (call
+        function: (identifier)
+        arguments: (argument_list
+          (string
+            (string_start)
+            (string_content)
+            (string_end))
+          (call
+            function: (attribute
+              object: (identifier)
+              attribute: (identifier))
+            arguments: (argument_list
+              (identifier)))))))
+  (call
+    function: (subscript
+      value: (identifier)
+      subscript: (string
+        (string_start)
+        (string_content)
+        (string_end)))
+    arguments: (argument_list
+      (identifier))))
+
+================================================================================
+Fused Types 4
+================================================================================
+
+myfunc[int](fused_type)
+
+--------------------------------------------------------------------------------
+
+(module
+  (call
+    function: (subscript
+      value: (identifier)
+      subscript: (identifier))
+    arguments: (argument_list
+      (identifier))))
+
+================================================================================
+Fused Types 5
+================================================================================
+
+(<object (*)(float, int)> myfunc)(f, i)
+
+--------------------------------------------------------------------------------
+
+(module
+  (call
+    function: (parenthesized_expression
+      (c_cast_expression
+        type: (c_function_pointer_type
+          return_type: (c_type
+            (identifier))
+          parameters: (c_parameters
+            (c_parameter
+              type: (c_type
+                (identifier)))
+            (c_parameter
+              type: (c_type
+                (identifier)))))
+        value: (identifier)))
+    arguments: (argument_list
+      (identifier)
+      (identifier))))
+
+================================================================================
+Type Checking Specializations
+================================================================================
+
+cdef cython.integral myfunc(cython.integral i, bunch_of_types s):
+    
+    if cython.integral is int:
+        print('i is int')
+    elif cython.integral is long:
+        print('i is long')
+    else:
+        print('i is short')
+
+    if bunch_of_types in string_t:
+        print("s is a string!")
+    return i * 2
+
+--------------------------------------------------------------------------------
+
+(module
+  (cdef_function_definition
+    return_type: (c_type
+      (dotted_name
+        (identifier)
+        (identifier)))
+    name: (identifier)
+    parameters: (c_parameters
+      (c_parameter
+        type: (c_type
+          (dotted_name
+            (identifier)
+            (identifier)))
+        name: (identifier))
+      (c_parameter
+        type: (c_type
+          (identifier))
+        name: (identifier)))
+    body: (block
+      (if_statement
+        condition: (comparison_operator
+          (attribute
+            object: (identifier)
+            attribute: (identifier))
+          (identifier))
+        consequence: (block
+          (call
+            function: (identifier)
+            arguments: (argument_list
+              (string
+                (string_start)
+                (string_content)
+                (string_end)))))
+        alternative: (elif_clause
+          condition: (comparison_operator
+            (attribute
+              object: (identifier)
+              attribute: (identifier))
+            (identifier))
+          consequence: (block
+            (call
+              function: (identifier)
+              arguments: (argument_list
+                (string
+                  (string_start)
+                  (string_content)
+                  (string_end))))))
+        alternative: (else_clause
+          body: (block
+            (call
+              function: (identifier)
+              arguments: (argument_list
+                (string
+                  (string_start)
+                  (string_content)
+                  (string_end)))))))
+      (if_statement
+        condition: (comparison_operator
+          (identifier)
+          (identifier))
+        consequence: (block
+          (call
+            function: (identifier)
+            arguments: (argument_list
+              (string
+                (string_start)
+                (string_content)
+                (string_end))))))
+      (return_statement
+        (binary_operator
+          left: (identifier)
+          right: (integer))))))
+
+================================================================================
+Conditional GIL Acquiring / Releasing
+================================================================================
+
+ctypedef fused double_or_object:
+    double
+    object
+
+def increment(double_or_object x):
+    with nogil(double_or_object is not object):
+        x = x + 1
+    return x
+
+--------------------------------------------------------------------------------
+
+(module
+  (ctypedef_fused_definition
+    name: (identifier)
+    body: (block
+      (identifier)
+      (identifier)))
+  (function_definition
+    name: (identifier)
+    parameters: (parameters
+      (c_parameter
+        type: (c_type)
+        name: (identifier)))
+    body: (block
+      (with_statement
+        (with_clause
+          (with_item
+            value: (call
+              function: (identifier)
+              arguments: (argument_list
+                (comparison_operator
+                  (identifier)
+                  (identifier))))))
+        body: (block
+          (assignment
+            left: (identifier)
+            right: (binary_operator
+              left: (identifier)
+              right: (integer)))))
+      (return_statement
+        (identifier)))))
